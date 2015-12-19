@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "make": "elm-make src/Razfaz.elm --output build/razfaz.js",
-    "watch": "watch-run -i -p 'src/*.elm' 'npm run make'"
+    "watch": "watch-run -i -p 'src/*.elm' 'npm run make'",
+    "format": "./elm-format src --yes"
   },
   "author": "",
   "license": "ISC",
