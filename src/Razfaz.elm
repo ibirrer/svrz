@@ -5,11 +5,13 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import List
 import String exposing (toUpper, repeat, trimRight)
-import StartApp.Simple as StartApp
+import StartApp
 import Debug
 import Signal exposing (Address)
+import Effects exposing (Effects)
 
 
+-----------------------------------
 -- MODEL --------------------------
 -----------------------------------
 
@@ -39,7 +41,8 @@ type alias RankingEntry =
 
 
 type alias League =
-    { name : String
+    { id : String
+    , name : String
     , shortName : String
     , gender : Gender
     }
@@ -61,7 +64,8 @@ type alias Model =
 initialModel : Model
 initialModel =
     { league =
-        { name = "Zürimeisterschaft ZM1"
+        { id = "9446"
+        , name = "Zürimeisterschaft ZM1"
         , shortName = "Zm H1"
         , gender = Male
         }
@@ -152,21 +156,21 @@ sortRanking model =
                 }
 
 
-update : Action -> Model -> Model
+update : Action -> Model -> ( Model, Effects Action )
 update action model =
     case action of
         NoOp ->
-            model
+            ( model, Effects.none )
 
         Sort ->
-            sortRanking model
+            ( (sortRanking model), Effects.none )
 
         Delete teamId ->
             let
                 remainingEntries =
                     List.filter (\e -> e.teamId /= teamId) model.ranking
             in
-                { model | ranking = remainingEntries }
+                ( { model | ranking = remainingEntries }, Effects.none )
 
 
 
@@ -189,9 +193,9 @@ view address model =
 sortButton : Address Action -> SortOrder -> Html
 sortButton address nextRankingSortOrder =
     if nextRankingSortOrder == Asc then
-        button [ onClick address Sort ] [ text "Sort (▼)" ]
+        button [ onClick address Sort ] [ text "Sort (v)" ]
     else
-        button [ onClick address Sort ] [ text "Sort (▲)" ]
+        button [ onClick address Sort ] [ text "Sort (^)" ]
 
 
 pageHeader : League -> Html
@@ -268,11 +272,16 @@ pageFooter =
 ---------------------------------------------------------------
 
 
+app : StartApp.App Model
+app =
+    StartApp.start
+        { init = ( (sortRanking initialModel), Effects.none )
+        , update = update
+        , view = view
+        , inputs = []
+        }
+
+
 main : Signal Html
 main =
-    StartApp.start
-        { model =
-            sortRanking initialModel
-        , view = view
-        , update = update
-        }
+    app.html
