@@ -9,6 +9,8 @@ import StartApp
 import Debug
 import Signal exposing (Address)
 import Effects exposing (Effects)
+import Http
+import Task
 
 
 -----------------------------------
@@ -58,6 +60,8 @@ type alias Model =
     , ranking : List RankingEntry
     , games : {}
     , nextRankingSortOrder : SortOrder
+    , leagueData : String
+    , jsData : String
     }
 
 
@@ -69,6 +73,8 @@ initialModel =
         , shortName = "Zm H1"
         , gender = Male
         }
+    , leagueData = "not loaded"
+    , jsData = "not loaded"
     , ranking =
         [ { rank = 3
           , team = "Raz Faz"
@@ -134,6 +140,9 @@ type Action
     = NoOp
     | Sort
     | Delete Int
+    | GetFromSvrz
+    | LegueDataReceived (Maybe String)
+    | JsReceived String
 
 
 sortRanking : Model -> Model
@@ -156,6 +165,17 @@ sortRanking model =
                 }
 
 
+getLeagueData : String -> Effects Action
+getLeagueData leagueId =
+    let
+        url = "https://crossorigin.me/http://www.svrz.ch/index.php?id=73&nextPage=1&group_ID=" ++ leagueId
+    in
+        Http.getString url
+            |> Task.toMaybe
+            |> Task.map LegueDataReceived
+            |> Effects.task
+
+
 update : Action -> Model -> ( Model, Effects Action )
 update action model =
     case action of
@@ -170,7 +190,24 @@ update action model =
                 remainingEntries =
                     List.filter (\e -> e.teamId /= teamId) model.ranking
             in
-                ( { model | ranking = remainingEntries }, Effects.none )
+                ( { model | ranking = remainingEntries }
+                , Effects.none
+                )
+
+        GetFromSvrz ->
+            ( { model | leagueData = "loading..." }
+            , getLeagueData model.league.id
+            )
+
+        LegueDataReceived maybeResult ->
+            ( { model | leagueData = Maybe.withDefault "error" maybeResult }
+            , Effects.none
+            )
+
+        JsReceived data ->
+            ( { model | jsData = data }
+            , Effects.none
+            )
 
 
 
@@ -186,7 +223,27 @@ view address model =
         [ pageHeader model.league
         , rankingTable address model.ranking
         , sortButton address model.nextRankingSortOrder
+        , getFromSvrzButton address
+        , dataFromJs model.jsData
+        , leagueDataItem model.leagueData
+        , hr [] []
         , pageFooter
+        ]
+
+
+dataFromJs data =
+    div
+        []
+        [ h2 [] [ text "js data" ]
+        , pre [] [ text data ]
+        ]
+
+
+leagueDataItem data =
+    div
+        []
+        [ h2 [] [ text "svrz data" ]
+        , pre [] [ text data ]
         ]
 
 
@@ -196,6 +253,10 @@ sortButton address nextRankingSortOrder =
         button [ onClick address Sort ] [ text "Sort (v)" ]
     else
         button [ onClick address Sort ] [ text "Sort (^)" ]
+
+
+getFromSvrzButton address =
+    button [ onClick address GetFromSvrz ] [ text "Get data from svrz" ]
 
 
 pageHeader : League -> Html
@@ -278,10 +339,19 @@ app =
         { init = ( (sortRanking initialModel), Effects.none )
         , update = update
         , view = view
-        , inputs = []
+        , inputs =
+            [ (Signal.map (\str -> JsReceived str) loadData) ]
         }
 
 
 main : Signal Html
 main =
     app.html
+
+
+port tasks : Signal (Task.Task Effects.Never ())
+port tasks =
+    app.tasks
+
+
+port loadData : Signal String

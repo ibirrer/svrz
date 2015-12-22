@@ -10,9 +10,10 @@
 
 <body>
 
-    <script src="../build/razfaz.js"></script>
+    <script src="razfaz.js"></script>
     <script>
-        Elm.fullscreen(Elm.Razfaz);
+        var app = Elm.fullscreen(Elm.Razfaz, { loadData: "" });
+        app.ports.loadData.send("sent");
     </script>
 </body>
 
