@@ -172,7 +172,8 @@ rankingHeaderRow =
         []
         [ th [] [ text "" ]
         , th [] [ text "" ]
-        , th [] [ text "Ballquotient" ]
+        , th [] [ text "BQ" ]
+        , th [] [ text "Spiele" ]
         , th [] [ text "Punkte" ]
         ]
 
@@ -183,8 +184,9 @@ rankingRow address rankingEntry =
         []
         [ td [] [ text ((toString rankingEntry.rank) ++ ".") ]
         , td [] [ text rankingEntry.team ]
-        , td [] [ text (toString rankingEntry.ballquotient) ]
-        , td [] [ text (toString rankingEntry.points) ]
+        , td [class "number"] [ text (toString rankingEntry.ballquotient) ]
+        , td [class "number"] [ text (toString rankingEntry.games) ]
+        , td [class "number"] [ text (toString rankingEntry.points) ]
         ]
 
 

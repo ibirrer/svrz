@@ -3,12 +3,13 @@
 [x] Deploy on github at http://ibirrer.github.io/svrz/
 
 [*] Use PouchDB for local and remote caching of league data
-    [*] browser db
+    [x] browser db
     [ ] sync to couchdb
     [ ] Hash leagueInfo results to allow that only one user needs
         to scrape the league info
 
-[ ] Use --compress in browserify
+[x] Use --compress in browserify
+
 [ ] Use watchify instead of browserify in npm run watch
 
 [ ] Also scrape and display all other leagues

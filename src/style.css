@@ -3,6 +3,10 @@ td {
   padding: 3px;
 }
 
+td.number {
+  text-align: right;
+}
+
 table {
   border-collapse: collapse;
   width: 100%;
