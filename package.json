@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "make": "npm run elm-compile && npm run bundle && npm run assets",
-    "elm-compile": "elm-make src/Razfaz.elm --output build/razfaz.js",
+    "elm-compile": "elm-make src/Razfaz.elm --yes --output build/razfaz.js",
     "watch": "watch-run -i -p 'src/*' 'npm run make'",
     "format": "./elm-format src --yes",
     "bundle": "browserify --outfile build/main.js src/main.js",
