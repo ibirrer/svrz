@@ -1,8 +1,10 @@
-td, th {
-  border: 1px solid #999;
+td {
+  border-bottom: 1px solid #999;
   padding: 3px;
 }
 
 table {
   border-collapse: collapse;
+  width: 100%;
+  max-width: 700px;
 }

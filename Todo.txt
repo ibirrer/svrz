@@ -1,0 +1,15 @@
+[x] Display Ranking
+[ ] Display Games
+[ ] Use local storage (pouchdb?)
+    [ ] Hash leagueInfo results to allow that only one user needs
+        to scrape the league info
+
+[ ] Publish at http://razfaz.there.ch or http://tvwollishofen.ch
+
+[ ] Error Handling
+  [ ] http request to svrz failing
+  [ ] scraping fails on JS side
+
+[ ] Scrape html in elm
+
+[ ] Create minimal example of StartApp with inbound and outbound ports (blog it?)

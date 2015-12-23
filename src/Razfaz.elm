@@ -205,8 +205,8 @@ rankingHeaderRow : Html
 rankingHeaderRow =
     tr
         []
-        [ th [] [ text "Rang" ]
-        , th [] [ text "Team" ]
+        [ th [] [ text "" ]
+        , th [] [ text "" ]
         , th [] [ text "Ballquotient" ]
         , th [] [ text "Punkte" ]
         ]
@@ -216,7 +216,7 @@ rankingRow : Address Action -> RankingEntry -> Html
 rankingRow address rankingEntry =
     tr
         []
-        [ td [] [ text (toString rankingEntry.rank) ]
+        [ td [] [ text ((toString rankingEntry.rank) ++ ".") ]
         , td [] [ text rankingEntry.team ]
         , td [] [ text (toString rankingEntry.ballquotient) ]
         , td [] [ text (toString rankingEntry.points) ]
