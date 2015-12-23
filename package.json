@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "jquery": "^2.1.4",
+    "pouchdb": "^5.1.0",
     "svrz-scraper": "git+https://github.com/ibirrer/svrz-scraper.git"
   }
 }

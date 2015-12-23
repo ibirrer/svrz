@@ -60,17 +60,19 @@ type alias LeagueInfo =
 type alias Model =
     { leagueInfo : LeagueInfo
     , scrapeLeagueFromHtml : Maybe String
+    , loadLeagueInfo : Maybe String
     }
 
 
 initialModel : Model
 initialModel =
     { leagueInfo =
-        { leagueId = "9446"
+        { leagueId = "invalid"
         , games = []
         , ranking = []
         }
     , scrapeLeagueFromHtml = Nothing
+    , loadLeagueInfo = Nothing
     }
 
 
@@ -82,9 +84,9 @@ initialModel =
 
 type Action
     = NoOp
-    | GetFromSvrz
     | LegueDataReceived (Maybe String)
     | JsReceived LeagueInfo
+    | GetFromPouchDb String
 
 
 getLeagueData : String -> Effects Action
@@ -104,14 +106,15 @@ update action model =
         NoOp ->
             ( model, Effects.none )
 
-        GetFromSvrz ->
-            ( model
-            , getLeagueData (model.leagueInfo.leagueId)
+        GetFromPouchDb leagueId ->
+            ( { model | loadLeagueInfo = Just leagueId }
+            , getLeagueData (leagueId)
             )
 
         LegueDataReceived maybeResult ->
             ( { model
                 | scrapeLeagueFromHtml = maybeResult
+                , loadLeagueInfo = Nothing
               }
             , Effects.none
             )
@@ -203,7 +206,7 @@ rankingTable address ranking =
 app : StartApp.App Model
 app =
     StartApp.start
-        { init = ( initialModel, getLeagueData (initialModel.leagueInfo.leagueId) )
+        { init = ( initialModel, Effects.task (Task.succeed (GetFromPouchDb "9446")) )
         , update = update
         , view = view
         , inputs =
@@ -225,3 +228,8 @@ port loadData : Signal LeagueInfo
 port scrapeSvrz : Signal String
 port scrapeSvrz =
     Signal.filterMap (\m -> m.scrapeLeagueFromHtml) "initial" app.model
+
+
+port loadLeagueInfo : Signal String
+port loadLeagueInfo =
+    Signal.filterMap (\m -> m.loadLeagueInfo) "initial" app.model

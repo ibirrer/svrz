@@ -3,9 +3,49 @@
 
 var scraper = require("svrz-scraper");
 var $ = require('jquery');
+var PouchDB = require('pouchdb');
 
-var url = scraper.urlFromLeagueId("9446");
 
+var storeLeagueInfo = function(leagueInfo) {
+    // _id needed by pouchdb
+    leagueInfo._id = leagueInfo.leagueId;
+    var db = new PouchDB(leagueInfo.leagueId);
+
+    db.get(leagueInfo.leagueId)
+        .then(function(doc) {
+            // update
+            leagueInfo._rev = doc._rev;
+            db.put(leagueInfo)
+                .then(function(response) {
+                    console.log("updated");
+                }).catch(function(err) {
+                    console.log("error updating");
+                });
+        }).catch(function(err) {
+            // insert
+            db.put(leagueInfo)
+                .then(function(response) {
+                    console.log("inserted");
+                }).catch(function(err) {
+                    console.log("error inserting");
+                });
+        });
+}
+
+var loadLeagueInfo = function(leagueId, callback) {
+    var db = new PouchDB(leagueId);
+
+    db.get(leagueId)
+        .then(function(leagueInfo) {
+            // update
+            callback(leagueInfo);
+        }).catch(function(err) {
+            console.log("failed to load leagueInfo. ", err);
+        });
+}
+
+
+// start elm app
 var app = Elm.fullscreen(Elm.Razfaz,
         { loadData:
             { leagueId: "0"
@@ -13,11 +53,22 @@ var app = Elm.fullscreen(Elm.Razfaz,
             , ranking: [] }
             });
 
+// wire ports
 app.ports.scrapeSvrz.subscribe(function(leagueHtml) {
     console.log("scraping league...");
     var leagueInfo = scraper.scrape($, $.parseHTML(leagueHtml));
+    storeLeagueInfo(leagueInfo);
     app.ports.loadData.send(leagueInfo);
 });
+
+app.ports.loadLeagueInfo.subscribe(function(leagueId) {
+    loadLeagueInfo(leagueId, function(leagueInfo) {
+        app.ports.loadData.send(leagueInfo);
+    });
+});
+
+
+
 
 
 

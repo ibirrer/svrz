@@ -1,18 +1,30 @@
 [x] Display Ranking
 [x] Display Games
-[ ] Use local storage (pouchdb?)
+[x] Deploy on github at http://ibirrer.github.io/svrz/
+
+[*] Use PouchDB for local and remote caching of league data
+    [*] browser db
+    [ ] sync to couchdb
     [ ] Hash leagueInfo results to allow that only one user needs
         to scrape the league info
 
+[ ] Use --compress in browserify
+[ ] Use watchify instead of browserify in npm run watch
+
+[ ] Also scrape and display all other leagues
+    [ ] Read state from url -> http://ibirrer.github.io/svrz/{:leagueId}
+
 [ ] Write tests (elm and http://webdriver.io/)
 
-[ ] Publish at http://razfaz.there.ch or http://tvwollishofen.ch
+[ ] DNS entry for http://razfaz.there.ch or http://svrz.tvwollishofen.ch or ?
 
 [ ] Error Handling
   [ ] http request to svrz failing
   [ ] scraping fails on JS side
 
 [ ] Scrape html in elm
+
+[ ] Make it look nice (css)
 
 [ ] Create minimal example of StartApp with inbound and outbound ports (blog it?)
 
