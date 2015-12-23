@@ -1,0 +1,2 @@
+Develop
+    npm run watch
