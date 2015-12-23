@@ -9,7 +9,7 @@
     "elm-compile": "elm-make src/Razfaz.elm --yes --output build/razfaz.js",
     "watch": "watch-run -i -p 'src/*' 'npm run make'",
     "format": "./elm-format src --yes",
-    "bundle": "browserify --outfile build/main.js src/main.js",
+    "bundle": "browserify src/main.js | uglifyjs --output build/main.js",
     "assets": "copyfiles -u 1 src/*.css src/*.html build",
     "serve": "http-server build"
   },
@@ -19,6 +19,7 @@
     "browserify": "^12.0.1",
     "copyfiles": "^0.2.1",
     "http-server": "^0.8.5",
+    "uglify-js": "^2.6.1",
     "watch-run": "^1.2.4"
   },
   "dependencies": {
