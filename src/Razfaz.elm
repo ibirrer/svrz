@@ -60,8 +60,7 @@ type SortOrder
 type alias Model =
     { leagueInfo : LeagueInfo
     , nextRankingSortOrder : SortOrder
-    , leagueData : String
-    , jsData : String
+    , scrapeLeagueFromHtml : Maybe String
     }
 
 
@@ -72,9 +71,8 @@ initialModel =
         , games = []
         , ranking = []
         }
-    , leagueData = "not loaded"
-    , jsData = "not loaded"
     , nextRankingSortOrder = Asc
+    , scrapeLeagueFromHtml = Nothing
     }
 
 
@@ -144,12 +142,14 @@ update action model =
             ( (sortRanking model), Effects.none )
 
         GetFromSvrz ->
-            ( { model | leagueData = "loading..." }
+            ( model
             , getLeagueData (model.leagueInfo.leagueId)
             )
 
         LegueDataReceived maybeResult ->
-            ( { model | leagueData = Maybe.withDefault "error" maybeResult }
+            ( { model
+                | scrapeLeagueFromHtml = maybeResult
+              }
             , Effects.none
             )
 
@@ -157,7 +157,10 @@ update action model =
             let
                 leagueInfo = model.leagueInfo
             in
-                ( { model | leagueInfo = newLeagueInfo }
+                ( { model
+                    | leagueInfo = newLeagueInfo
+                    , scrapeLeagueFromHtml = Nothing
+                  }
                 , Effects.none
                 )
 
@@ -176,26 +179,8 @@ view address model =
         , rankingTable address model.leagueInfo.ranking
         , sortButton address model.nextRankingSortOrder
         , getFromSvrzButton address
-        , dataFromJs model.jsData
-        , leagueDataItem model.leagueData
         , hr [] []
         , pageFooter
-        ]
-
-
-dataFromJs data =
-    div
-        []
-        [ h2 [] [ text "js data" ]
-        , pre [] [ text data ]
-        ]
-
-
-leagueDataItem data =
-    div
-        []
-        [ h2 [] [ text "svrz data" ]
-        , pre [] [ text data ]
         ]
 
 
@@ -265,7 +250,7 @@ pageFooter =
 app : StartApp.App Model
 app =
     StartApp.start
-        { init = ( (sortRanking initialModel), Effects.none )
+        { init = ( initialModel, getLeagueData (initialModel.leagueInfo.leagueId) )
         , update = update
         , view = view
         , inputs =
@@ -284,3 +269,6 @@ port tasks =
 
 
 port loadData : Signal LeagueInfo
+port scrapeSvrz : Signal String
+port scrapeSvrz =
+    Signal.filterMap (\m -> m.scrapeLeagueFromHtml) "initial" app.model
