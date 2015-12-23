@@ -1,8 +1,10 @@
 [x] Display Ranking
-[ ] Display Games
+[x] Display Games
 [ ] Use local storage (pouchdb?)
     [ ] Hash leagueInfo results to allow that only one user needs
         to scrape the league info
+
+[ ] Write tests (elm and http://webdriver.io/)
 
 [ ] Publish at http://razfaz.there.ch or http://tvwollishofen.ch
 
@@ -13,3 +15,11 @@
 [ ] Scrape html in elm
 
 [ ] Create minimal example of StartApp with inbound and outbound ports (blog it?)
+
+
+
+
+Legend
+------
+[x] done
+[*] in progress

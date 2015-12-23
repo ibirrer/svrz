@@ -13,6 +13,11 @@ import Http
 import Task
 
 
+-- local imports
+
+import GamesTable
+
+
 -----------------------------------
 -- MODEL --------------------------
 -----------------------------------
@@ -171,12 +176,27 @@ update action model =
 ---------------------------------------------------------------
 
 
+mapToGamesResultModel games =
+    List.map
+        (\g ->
+            { date = g.date
+            , homeTeam = g.team
+            , awayTeam = g.opponent
+            , result = g.result
+            }
+        )
+        games
+
+
 view : Address Action -> Model -> Html
 view address model =
     div
         []
         [ pageHeader
+        , h2 [] [ text "Rangliste" ]
         , rankingTable address model.leagueInfo.ranking
+        , h2 [] [ text "Spiele" ]
+        , (GamesTable.view (mapToGamesResultModel model.leagueInfo.games))
         , sortButton address model.nextRankingSortOrder
         , getFromSvrzButton address
         , hr [] []
@@ -198,7 +218,7 @@ getFromSvrzButton address =
 
 pageHeader : Html
 pageHeader =
-    h1 [] [ text "Raz Faz" ]
+    h1 [] [ text "ZM Herren 1" ]
 
 
 rankingHeaderRow : Html
