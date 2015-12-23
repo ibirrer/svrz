@@ -18,35 +18,37 @@ import Task
 -----------------------------------
 
 
-type Gender
-    = Male
-    | Female
-
-
 type alias RankingEntry =
     { rank : Int
     , team : String
-    , teamId : Int
-    , gamesPlayed : Int
-    , setrate :
-        { won : Int
-        , lost : Int
-        }
-    , setquotient : Float
-    , ballrate :
-        { won : Int
-        , lost : Int
-        }
+    , games : Int
     , ballquotient : Float
     , points : Int
     }
 
 
-type alias League =
-    { id : String
-    , name : String
-    , shortName : String
-    , gender : Gender
+type alias GameResult =
+    { home : Int
+    , away : Int
+    }
+
+
+type alias Game =
+    { id : Int
+    , team : String
+    , teamId : Int
+    , date : String
+    , time : String
+    , opponent : String
+    , opponentId : Int
+    , result : Maybe GameResult
+    }
+
+
+type alias LeagueInfo =
+    { leagueId : String
+    , games : List Game
+    , ranking : List RankingEntry
     }
 
 
@@ -56,9 +58,7 @@ type SortOrder
 
 
 type alias Model =
-    { league : League
-    , ranking : List RankingEntry
-    , games : {}
+    { leagueInfo : LeagueInfo
     , nextRankingSortOrder : SortOrder
     , leagueData : String
     , jsData : String
@@ -67,65 +67,13 @@ type alias Model =
 
 initialModel : Model
 initialModel =
-    { league =
-        { id = "9446"
-        , name = "Zürimeisterschaft ZM1"
-        , shortName = "Zm H1"
-        , gender = Male
+    { leagueInfo =
+        { leagueId = "9446"
+        , games = []
+        , ranking = []
         }
     , leagueData = "not loaded"
     , jsData = "not loaded"
-    , ranking =
-        [ { rank = 3
-          , team = "Raz Faz"
-          , teamId = 1
-          , gamesPlayed = 2
-          , setrate =
-                { won = 6
-                , lost = 5
-                }
-          , setquotient = 2.55
-          , ballrate =
-                { won = 300
-                , lost = 200
-                }
-          , ballquotient = 2.66
-          , points = 10
-          }
-        , { rank = 2
-          , team = "VBC Kanti Limmattal 3"
-          , teamId = 2
-          , gamesPlayed = 2
-          , setrate =
-                { won = 6
-                , lost = 5
-                }
-          , setquotient = 2.01
-          , ballrate =
-                { won = 200
-                , lost = 200
-                }
-          , ballquotient = 2
-          , points = 8
-          }
-        , { rank = 4
-          , team = "Einsiedeln"
-          , teamId = 4
-          , gamesPlayed = 2
-          , setrate =
-                { won = 6
-                , lost = 5
-                }
-          , setquotient = 2.01
-          , ballrate =
-                { won = 200
-                , lost = 200
-                }
-          , ballquotient = 2
-          , points = 5
-          }
-        ]
-    , games = {}
     , nextRankingSortOrder = Asc
     }
 
@@ -139,28 +87,38 @@ initialModel =
 type Action
     = NoOp
     | Sort
-    | Delete Int
     | GetFromSvrz
     | LegueDataReceived (Maybe String)
-    | JsReceived String
+    | JsReceived LeagueInfo
 
 
 sortRanking : Model -> Model
 sortRanking model =
     let
         sortedRanking =
-            List.sortBy .rank model.ranking
+            List.sortBy .rank model.leagueInfo.ranking
+
+        leagueInfo =
+            model.leagueInfo
+
+        sortedLeagueInfo =
+            case model.nextRankingSortOrder of
+                Asc ->
+                    { leagueInfo | ranking = sortedRanking }
+
+                Desc ->
+                    { leagueInfo | ranking = List.reverse sortedRanking }
     in
         case model.nextRankingSortOrder of
             Asc ->
                 { model
-                    | ranking = sortedRanking
+                    | leagueInfo = sortedLeagueInfo
                     , nextRankingSortOrder = Desc
                 }
 
             Desc ->
                 { model
-                    | ranking = List.reverse sortedRanking
+                    | leagueInfo = sortedLeagueInfo
                     , nextRankingSortOrder = Asc
                 }
 
@@ -185,18 +143,9 @@ update action model =
         Sort ->
             ( (sortRanking model), Effects.none )
 
-        Delete teamId ->
-            let
-                remainingEntries =
-                    List.filter (\e -> e.teamId /= teamId) model.ranking
-            in
-                ( { model | ranking = remainingEntries }
-                , Effects.none
-                )
-
         GetFromSvrz ->
             ( { model | leagueData = "loading..." }
-            , getLeagueData model.league.id
+            , getLeagueData (model.leagueInfo.leagueId)
             )
 
         LegueDataReceived maybeResult ->
@@ -204,10 +153,13 @@ update action model =
             , Effects.none
             )
 
-        JsReceived data ->
-            ( { model | jsData = data }
-            , Effects.none
-            )
+        JsReceived newLeagueInfo ->
+            let
+                leagueInfo = model.leagueInfo
+            in
+                ( { model | leagueInfo = newLeagueInfo }
+                , Effects.none
+                )
 
 
 
@@ -220,8 +172,8 @@ view : Address Action -> Model -> Html
 view address model =
     div
         []
-        [ pageHeader model.league
-        , rankingTable address model.ranking
+        [ pageHeader
+        , rankingTable address model.leagueInfo.ranking
         , sortButton address model.nextRankingSortOrder
         , getFromSvrzButton address
         , dataFromJs model.jsData
@@ -259,9 +211,9 @@ getFromSvrzButton address =
     button [ onClick address GetFromSvrz ] [ text "Get data from svrz" ]
 
 
-pageHeader : League -> Html
-pageHeader league =
-    h1 [] [ text league.name ]
+pageHeader : Html
+pageHeader =
+    h1 [] [ text "Raz Faz" ]
 
 
 rankingHeaderRow : Html
@@ -271,7 +223,7 @@ rankingHeaderRow =
         [ th [] [ text "Rang" ]
         , th [] [ text "Team" ]
         , th [] [ text "Punkte" ]
-        , th [] [ text "Action" ]
+        , th [] [ text "Ballquotient" ]
         ]
 
 
@@ -282,29 +234,7 @@ rankingRow address rankingEntry =
         [ td [] [ text (toString rankingEntry.rank) ]
         , td [] [ text rankingEntry.team ]
         , td [] [ text (toString rankingEntry.points) ]
-        , td
-            []
-            [ button
-                [ onClick address (Delete rankingEntry.teamId) ]
-                [ text "Delete" ]
-            ]
-        ]
-
-
-sumRankingPoints : List RankingEntry -> Int
-sumRankingPoints ranking =
-    List.map .points ranking
-        |> List.sum
-
-
-rankingTotalRow : List RankingEntry -> Html
-rankingTotalRow ranking =
-    tr
-        []
-        [ td [] [ text "Total" ]
-        , td [] [ text "" ]
-        , td [] [ ranking |> sumRankingPoints |> toString |> text ]
-        , td [] [ text "" ]
+        , td [] [ text (toString rankingEntry.ballquotient) ]
         ]
 
 
@@ -314,7 +244,6 @@ rankingTable address ranking =
         []
         ([ rankingHeaderRow ]
             ++ List.map (rankingRow address) ranking
-            ++ [ rankingTotalRow ranking ]
         )
 
 
@@ -340,7 +269,7 @@ app =
         , update = update
         , view = view
         , inputs =
-            [ (Signal.map (\str -> JsReceived str) loadData) ]
+            [ (Signal.map (\leagueInfo -> JsReceived leagueInfo) loadData) ]
         }
 
 
@@ -354,4 +283,4 @@ port tasks =
     app.tasks
 
 
-port loadData : Signal String
+port loadData : Signal LeagueInfo

@@ -5,18 +5,22 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "make": "elm-make src/Razfaz.elm --output build/razfaz.js && cp src/style.css build/ && cp src/index.html build/",
+    "make": "elm-make src/Razfaz.elm --output build/razfaz.js && npm run bundle && ncp src/*.css build/ && ncp src/index.html build/",
     "watch": "watch-run -i -p 'src/*' 'npm run make'",
     "format": "./elm-format src --yes",
+    "bundle": "browserify src/main.js > build/main.js",
     "serve": "http-server build"
   },
   "author": "Iwan Birrer",
   "license": "ISC",
   "devDependencies": {
+    "browserify": "^12.0.1",
     "http-server": "^0.8.5",
+    "ncp": "^2.0.0",
     "watch-run": "^1.2.4"
   },
   "dependencies": {
+    "jquery": "^2.1.4",
     "svrz-scraper": "git+https://github.com/ibirrer/svrz-scraper.git"
   }
 }
