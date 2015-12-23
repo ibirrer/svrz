@@ -5,18 +5,20 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "make": "elm-make src/Razfaz.elm --output build/razfaz.js && npm run bundle && ncp src/*.css build/ && ncp src/index.html build/",
+    "make": "npm run elm-compile && npm run bundle && npm run assets",
+    "elm-compile": "elm-make src/Razfaz.elm --output build/razfaz.js",
     "watch": "watch-run -i -p 'src/*' 'npm run make'",
     "format": "./elm-format src --yes",
-    "bundle": "browserify src/main.js > build/main.js",
+    "bundle": "browserify --outfile build/main.js src/main.js",
+    "assets": "copyfiles -u 1 src/*.css src/*.html build",
     "serve": "http-server build"
   },
   "author": "Iwan Birrer",
   "license": "ISC",
   "devDependencies": {
     "browserify": "^12.0.1",
+    "copyfiles": "^0.2.1",
     "http-server": "^0.8.5",
-    "ncp": "^2.0.0",
     "watch-run": "^1.2.4"
   },
   "dependencies": {
