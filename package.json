@@ -5,11 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "make": "npm run elm-compile && npm run bundle && npm run assets",
+    "make": "npm run elm-compile && npm run bundle && npm run assets && npm run uglify",
     "elm-compile": "elm-make src/Razfaz.elm --yes --output build/razfaz.js",
     "watch": "watch-run -i -p 'src/*' 'npm run make'",
     "format": "./elm-format src --yes",
-    "bundle": "browserify src/main.js | uglifyjs --output build/main.js",
+    "bundle": "browserify src/main.js --outfile build/main.js",
+    "uglify": "uglifyjs -c -m --output build/razfaz.js build/razfaz.js build/main.js",
     "assets": "copyfiles -u 1 src/*.css src/*.html build",
     "serve": "http-server build"
   },
