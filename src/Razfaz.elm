@@ -57,14 +57,8 @@ type alias LeagueInfo =
     }
 
 
-type SortOrder
-    = Asc
-    | Desc
-
-
 type alias Model =
     { leagueInfo : LeagueInfo
-    , nextRankingSortOrder : SortOrder
     , scrapeLeagueFromHtml : Maybe String
     }
 
@@ -76,7 +70,6 @@ initialModel =
         , games = []
         , ranking = []
         }
-    , nextRankingSortOrder = Asc
     , scrapeLeagueFromHtml = Nothing
     }
 
@@ -89,41 +82,9 @@ initialModel =
 
 type Action
     = NoOp
-    | Sort
     | GetFromSvrz
     | LegueDataReceived (Maybe String)
     | JsReceived LeagueInfo
-
-
-sortRanking : Model -> Model
-sortRanking model =
-    let
-        sortedRanking =
-            List.sortBy .rank model.leagueInfo.ranking
-
-        leagueInfo =
-            model.leagueInfo
-
-        sortedLeagueInfo =
-            case model.nextRankingSortOrder of
-                Asc ->
-                    { leagueInfo | ranking = sortedRanking }
-
-                Desc ->
-                    { leagueInfo | ranking = List.reverse sortedRanking }
-    in
-        case model.nextRankingSortOrder of
-            Asc ->
-                { model
-                    | leagueInfo = sortedLeagueInfo
-                    , nextRankingSortOrder = Desc
-                }
-
-            Desc ->
-                { model
-                    | leagueInfo = sortedLeagueInfo
-                    , nextRankingSortOrder = Asc
-                }
 
 
 getLeagueData : String -> Effects Action
@@ -142,9 +103,6 @@ update action model =
     case action of
         NoOp ->
             ( model, Effects.none )
-
-        Sort ->
-            ( (sortRanking model), Effects.none )
 
         GetFromSvrz ->
             ( model
@@ -197,23 +155,8 @@ view address model =
         , rankingTable address model.leagueInfo.ranking
         , h2 [] [ text "Spiele" ]
         , (GamesTable.view (mapToGamesResultModel model.leagueInfo.games))
-        , sortButton address model.nextRankingSortOrder
-        , getFromSvrzButton address
         , hr [] []
-        , pageFooter
         ]
-
-
-sortButton : Address Action -> SortOrder -> Html
-sortButton address nextRankingSortOrder =
-    if nextRankingSortOrder == Asc then
-        button [ onClick address Sort ] [ text "Sort (v)" ]
-    else
-        button [ onClick address Sort ] [ text "Sort (^)" ]
-
-
-getFromSvrzButton address =
-    button [ onClick address GetFromSvrz ] [ text "Get data from svrz" ]
 
 
 pageHeader : Html
@@ -250,15 +193,6 @@ rankingTable address ranking =
         ([ rankingHeaderRow ]
             ++ List.map (rankingRow address) ranking
         )
-
-
-pageFooter : Html
-pageFooter =
-    footer
-        []
-        [ a [ href "http://razfaz.there.ch" ] [ text "Raz Faz" ]
-        , text " by TV Wollishofen."
-        ]
 
 
 
