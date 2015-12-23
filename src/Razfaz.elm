@@ -155,7 +155,6 @@ view address model =
         , rankingTable address model.leagueInfo.ranking
         , h2 [] [ text "Spiele" ]
         , (GamesTable.view (mapToGamesResultModel model.leagueInfo.games))
-        , hr [] []
         ]
 
 
