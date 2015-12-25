@@ -2,6 +2,8 @@
 [x] Display Games
 [x] Deploy on github at http://ibirrer.github.io/svrz/
 
+[x] make dev mode faster (npm run watch)
+
 [*] Use PouchDB for local and remote caching of league data
     [x] browser db
     [ ] sync to couchdb

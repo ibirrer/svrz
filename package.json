@@ -4,14 +4,24 @@
   "description": "Trying to use elm-lang to display volleyball result from http://www.svrz.ch/",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "make": "npm run elm-compile && npm run bundle && npm run assets && npm run uglify",
-    "elm-compile": "elm-make src/Razfaz.elm --yes --output build/razfaz.js",
-    "watch": "watch-run -i -p 'src/*' 'npm run make'",
+    "watch:elm": "watch-run -i -p 'src/*.elm' 'elm-make src/Razfaz.elm --yes --output build/razfaz.js'",
+    "watch:browserify": "watchify src/main.js -o build/main.js",
+    "watch:assets": "watch-run -i -p 'src/*.html,src/*.css' 'copyfiles -u 1 src/*.css src/*.html build'",
+    "watch": "npm run elm:watch & npm run browserify:watch & npm run assets:watch",
+
+    "build:elm": "elm-make src/Razfaz.elm --yes --output build/razfaz.js",
+    "build:browserify": "browserify src/main.js --outfile build/main.js",
+    "build:assets": "copyfiles -u 1 src/*.css src/*.html build",
+    "build": "npm run build:elm && npm run build:browserify && npm run build:assets",
+
+    "dist:uglify": "uglifyjs -c -m --output dist/razfaz.js build/razfaz.js build/main.js",
+    "dist:assets": "copyfiles -u 1 build/*.css build/*.html dist",
+    "dist": "npm run clean && npm run build && npm run dist:assets && npm run dist:uglify",
+
+    "clean": "rm -rf build && rm -rf dist",
+
     "format": "./elm-format src --yes",
-    "bundle": "browserify src/main.js --outfile build/main.js",
-    "uglify": "uglifyjs -c -m --output build/razfaz.js build/razfaz.js build/main.js",
-    "assets": "copyfiles -u 1 src/*.css src/*.html build",
+
     "serve": "http-server build"
   },
   "author": "Iwan Birrer",
@@ -21,7 +31,8 @@
     "copyfiles": "^0.2.1",
     "http-server": "^0.8.5",
     "uglify-js": "^2.6.1",
-    "watch-run": "^1.2.4"
+    "watch-run": "^1.2.4",
+    "watchify": "^3.6.1"
   },
   "dependencies": {
     "jquery": "^2.1.4",

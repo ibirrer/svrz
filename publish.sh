@@ -5,10 +5,10 @@ set -e
 git checkout -b dist
 git clean -xdf
 npm install
-npm run make
-sed -i '/build/d' .gitignore
+npm run dist
+sed -i '/dist/d' .gitignore
 git add . && git commit -m "prepare dist"
-git subtree split --prefix build -b gh-pages
+git subtree split --prefix dist -b gh-pages
 git push -f origin gh-pages:gh-pages
 git branch -D gh-pages
 git checkout master
