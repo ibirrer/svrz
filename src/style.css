@@ -12,3 +12,12 @@ table {
   width: 100%;
   max-width: 700px;
 }
+
+.won {
+  color: green;
+}
+
+.lost {
+  color: red;
+}
+

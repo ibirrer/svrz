@@ -137,16 +137,18 @@ update action model =
 ---------------------------------------------------------------
 
 
+mapToGamesResultModel : List Game -> GamesTable.Games
 mapToGamesResultModel games =
-    List.map
-        (\g ->
-            { date = g.date
-            , homeTeam = g.team
-            , awayTeam = g.opponent
-            , result = g.result
-            }
-        )
-        games
+    games
+        |> List.filter (\g -> g.team == "Raz Faz" || g.opponent == "Raz Faz")
+        |> List.map
+            (\g ->
+                { date = g.date
+                , homeTeam = g.team
+                , awayTeam = g.opponent
+                , result = g.result
+                }
+            )
 
 
 view : Address Action -> Model -> Html
@@ -180,14 +182,17 @@ rankingHeaderRow =
 
 rankingRow : Address Action -> RankingEntry -> Html
 rankingRow address rankingEntry =
-    tr
-        []
-        [ td [] [ text ((toString rankingEntry.rank) ++ ".") ]
-        , td [] [ text rankingEntry.team ]
-        , td [class "number"] [ text (toString rankingEntry.ballquotient) ]
-        , td [class "number"] [ text (toString rankingEntry.games) ]
-        , td [class "number"] [ text (toString rankingEntry.points) ]
-        ]
+    let
+        rankingStyle = if rankingEntry.team == "Raz Faz" then [("font-weight", "bold")] else []
+    in
+        tr
+            [style rankingStyle]
+            [ td [] [ text ((toString rankingEntry.rank) ++ ".") ]
+            , td [] [ text rankingEntry.team ]
+            , td [ class "number" ] [ text (toString rankingEntry.ballquotient) ]
+            , td [ class "number" ] [ text (toString rankingEntry.games) ]
+            , td [ class "number" ] [ text (toString rankingEntry.points) ]
+            ]
 
 
 rankingTable : Address Action -> List RankingEntry -> Html

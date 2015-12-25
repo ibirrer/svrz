@@ -28,6 +28,23 @@ type alias Games =
 
 -- View
 
+resultToStyle : Game -> String
+resultToStyle game =
+     if game.homeTeam == "Raz Faz" then
+        case game.result of
+            Just g ->
+                if g.home > g.away then "won" else "lost"
+            Nothing ->
+                ""
+     else if game.awayTeam == "Raz Faz" then
+        case game.result of
+                Just g ->
+                    if g.home > g.away then "lost" else "won"
+                Nothing ->
+                    ""
+     else
+        ""
+
 
 gameResultAsString : Maybe GameResult -> String
 gameResultAsString gameResult =
@@ -45,7 +62,7 @@ row game =
         []
         [ td [] [ text (game.homeTeam) ]
         , td [] [ text (game.awayTeam) ]
-        , td [] [ text (gameResultAsString game.result) ]
+        , td [ class (resultToStyle game) ] [ text (gameResultAsString game.result) ]
         ]
 
 

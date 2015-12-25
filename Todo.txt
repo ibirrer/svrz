@@ -4,6 +4,8 @@
 
 [x] make dev mode faster (npm run watch)
 
+[x] focus on current team (games and ranking)
+
 [*] Use PouchDB for local and remote caching of league data
     [x] browser db
     [ ] sync to couchdb
