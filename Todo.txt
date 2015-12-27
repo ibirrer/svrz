@@ -3,8 +3,12 @@
 [x] Deploy on github at http://ibirrer.github.io/svrz/
 
 [x] make dev mode faster (npm run watch)
+    [x] Use watchify instead of browserify in npm run watch
 
 [x] focus on current team (games and ranking)
+
+[ ] Also scrape and display all other leagues
+    [ ] Read state from url -> http://ibirrer.github.io/svrz/{:leagueId}
 
 [*] Use PouchDB for local and remote caching of league data
     [x] browser db
@@ -12,14 +16,13 @@
     [ ] Hash leagueInfo results to allow that only one user needs
         to scrape the league info
 
-[x] Use --compress in browserify
+[x] Use uglify to make dist size smaller
 
-[ ] Use watchify instead of browserify in npm run watch
+[ ] Cleanup code (function names, action names, component per feature (ranking, games, data, ports, ?)
 
-[ ] Also scrape and display all other leagues
-    [ ] Read state from url -> http://ibirrer.github.io/svrz/{:leagueId}
-
-[ ] Write tests (elm and http://webdriver.io/)
+[ ] Write tests
+    [ ] elm
+    [ ] http://webdriver.io/
 
 [ ] DNS entry for http://razfaz.there.ch or http://svrz.tvwollishofen.ch or ?
 
@@ -27,13 +30,16 @@
   [ ] http request to svrz failing
   [ ] scraping fails on JS side
 
-[ ] Scrape html in elm
-
 [ ] Make it look nice (css)
 
 [ ] Create minimal example of StartApp with inbound and outbound ports (blog it?)
 
+[ ] Remove dependency to jquery
+    File size of razfaz.js file in the dist is still pretty high (120KB) despite uglify and gzip (done by github pages)
 
+[-] Scrape html in elm
+    Tried, but parsing html is very slow when doing it in js, the browser is much better at it.
+    Might be an option if elm can somehow read the dom of the browser. Using ports for now.
 
 
 Legend
