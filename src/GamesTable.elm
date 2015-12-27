@@ -28,21 +28,30 @@ type alias Games =
 
 -- View
 
+
 resultToStyle : Game -> String
 resultToStyle game =
-     if game.homeTeam == "Raz Faz" then
+    if game.homeTeam == "Raz Faz" then
         case game.result of
             Just g ->
-                if g.home > g.away then "won" else "lost"
+                if g.home > g.away then
+                    "won"
+                else
+                    "lost"
+
             Nothing ->
                 ""
-     else if game.awayTeam == "Raz Faz" then
+    else if game.awayTeam == "Raz Faz" then
         case game.result of
-                Just g ->
-                    if g.home > g.away then "lost" else "won"
-                Nothing ->
-                    ""
-     else
+            Just g ->
+                if g.home > g.away then
+                    "lost"
+                else
+                    "won"
+
+            Nothing ->
+                ""
+    else
         ""
 
 

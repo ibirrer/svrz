@@ -183,10 +183,14 @@ rankingHeaderRow =
 rankingRow : Address Action -> RankingEntry -> Html
 rankingRow address rankingEntry =
     let
-        rankingStyle = if rankingEntry.team == "Raz Faz" then [("font-weight", "bold")] else []
+        rankingStyle =
+            if rankingEntry.team == "Raz Faz" then
+                [ ( "font-weight", "bold" ) ]
+            else
+                []
     in
         tr
-            [style rankingStyle]
+            [ style rankingStyle ]
             [ td [] [ text ((toString rankingEntry.rank) ++ ".") ]
             , td [] [ text rankingEntry.team ]
             , td [ class "number" ] [ text (toString rankingEntry.ballquotient) ]
