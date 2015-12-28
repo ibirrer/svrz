@@ -5,17 +5,13 @@ import Html.Attributes exposing (..)
 import Html.Events exposing (..)
 import List
 import String exposing (toUpper, repeat, trimRight)
+import Dict exposing (Dict)
 import StartApp
-import Debug
+import Regex exposing (regex)
 import Signal exposing (Address)
 import Effects exposing (Effects)
 import Http
 import Task
-
-
--- local imports
-
-import GamesTable
 
 
 -----------------------------------
@@ -61,7 +57,29 @@ type alias Model =
     { leagueInfo : LeagueInfo
     , scrapeLeagueFromHtml : Maybe String
     , loadLeagueInfo : Maybe String
+    , teamId : Int
     }
+
+
+teamToLeagueMapping : Dict Int String
+teamToLeagueMapping =
+    Dict.fromList
+        [ ( 26178, "9446" )
+        , ( 25739, "9446" )
+        , ( 25649, "9446" )
+        , ( 25696, "9446" )
+        , ( 25745, "9446" )
+        ]
+
+
+defaultLeague : String
+defaultLeague =
+    "9446"
+
+
+defaultTeam : Int
+defaultTeam =
+    25745
 
 
 initialModel : Model
@@ -73,6 +91,7 @@ initialModel =
         }
     , scrapeLeagueFromHtml = Nothing
     , loadLeagueInfo = Nothing
+    , teamId = defaultTeam
     }
 
 
@@ -87,6 +106,7 @@ type Action
     | LegueDataReceived (Maybe String)
     | JsReceived LeagueInfo
     | GetFromPouchDb String
+    | UrlHashChanged String
 
 
 getLeagueData : String -> Effects Action
@@ -104,7 +124,9 @@ update : Action -> Model -> ( Model, Effects Action )
 update action model =
     case action of
         NoOp ->
-            ( model, Effects.none )
+            ( model
+            , Effects.none
+            )
 
         GetFromPouchDb leagueId ->
             ( { model | loadLeagueInfo = Just leagueId }
@@ -130,25 +152,46 @@ update action model =
                 , Effects.none
                 )
 
+        UrlHashChanged hash ->
+            let
+                teamId =
+                    if Regex.contains (regex "^#teams/[0-9]{5}$") hash then
+                        let
+                            teamIdString = String.dropLeft 7 hash
+                        in
+                            case String.toInt teamIdString of
+                                Err msg ->
+                                    defaultTeam
+
+                                Ok teamId' ->
+                                    teamId'
+                    else
+                        defaultTeam
+
+                leagueId =
+                    Maybe.withDefault defaultLeague (Dict.get teamId teamToLeagueMapping)
+            in
+                ( { model | teamId = teamId }
+                , Effects.task (Task.succeed (GetFromPouchDb leagueId))
+                )
+
 
 
 ---------------------------------------------------------------
 -- VIEW -------------------------------------------------------
 ---------------------------------------------------------------
-
-
-mapToGamesResultModel : List Game -> GamesTable.Games
-mapToGamesResultModel games =
-    games
-        |> List.filter (\g -> g.team == "Raz Faz" || g.opponent == "Raz Faz")
-        |> List.map
-            (\g ->
-                { date = g.date
-                , homeTeam = g.team
-                , awayTeam = g.opponent
-                , result = g.result
-                }
-            )
+-- mapToGamesResultModel : Model -> GamesTable.Games
+-- mapToGamesResultModel model =
+--     model.leagueInfo.games
+--         |> List.filter (\g -> g.teamId == model.teamId || g.opponentId == model.teamId)
+--         |> List.map
+--             (\g ->
+--                 { date = g.date
+--                 , homeTeam = g.team
+--                 , awayTeam = g.opponent
+--                 , result = g.result
+--                 }
+--             )
 
 
 view : Address Action -> Model -> Html
@@ -159,7 +202,7 @@ view address model =
         , h2 [] [ text "Rangliste" ]
         , rankingTable address model.leagueInfo.ranking
         , h2 [] [ text "Spiele" ]
-        , (GamesTable.view (mapToGamesResultModel model.leagueInfo.games))
+        , (gamesTable model)
         ]
 
 
@@ -208,6 +251,93 @@ rankingTable address ranking =
         )
 
 
+type GameResultState
+    = WON Int Int
+    | LOST Int Int
+    | NOT_PLAYED
+
+
+getGameResultState : Game -> Int -> GameResultState
+getGameResultState game teamId =
+    if game.teamId == teamId then
+        case game.result of
+            Just g ->
+                if g.home > g.away then
+                    WON g.home g.away
+                else
+                    LOST g.home g.away
+
+            Nothing ->
+                NOT_PLAYED
+    else if game.opponentId == teamId then
+        case game.result of
+            Just g ->
+                if g.home > g.away then
+                    LOST g.away g.home
+                else
+                    WON g.away g.home
+
+            Nothing ->
+                NOT_PLAYED
+    else
+        NOT_PLAYED
+
+
+resultToStyle : GameResultState -> String
+resultToStyle gameResultState =
+    case gameResultState of
+        WON h a ->
+            "won"
+
+        LOST h a ->
+            "lost"
+
+        NOT_PLAYED ->
+            ""
+
+
+gameResultAsString : GameResultState -> String
+gameResultAsString gameResultState =
+    case gameResultState of
+        WON h a ->
+            toString h ++ " : " ++ toString a
+
+        LOST h a ->
+            toString h ++ " : " ++ toString a
+
+        NOT_PLAYED ->
+            "n/a"
+
+
+gamesRow : Model -> Game -> Html
+gamesRow model game =
+    let
+        gameResultState = getGameResultState game model.teamId
+    in
+        tr
+            []
+            [ td [] [ text (game.team) ]
+            , td [] [ text (game.opponent) ]
+            , td
+                [ classList
+                    [ ( resultToStyle gameResultState, True )
+                    , ( "number", True )
+                    ]
+                ]
+                [ text (gameResultAsString gameResultState) ]
+            ]
+
+
+gamesTable : Model -> Html
+gamesTable model =
+    let
+        filteredGames =
+            model.leagueInfo.games
+                |> List.filter (\g -> g.teamId == model.teamId || g.opponentId == model.teamId)
+    in
+        table [] (List.map (gamesRow model) (filteredGames))
+
+
 
 ---------------------------------------------------------------
 -- WIRING -----------------------------------------------------
@@ -217,11 +347,13 @@ rankingTable address ranking =
 app : StartApp.App Model
 app =
     StartApp.start
-        { init = ( initialModel, Effects.task (Task.succeed (GetFromPouchDb "9446")) )
+        { init = ( initialModel, Effects.none )
         , update = update
         , view = view
         , inputs =
-            [ (Signal.map (\leagueInfo -> JsReceived leagueInfo) loadData) ]
+            [ (Signal.map (\leagueInfo -> JsReceived leagueInfo) loadData)
+            , (Signal.map (\hash -> UrlHashChanged hash) urlHashChanged)
+            ]
         }
 
 
@@ -230,12 +362,27 @@ main =
     app.html
 
 
+
+-- start app port
+
+
 port tasks : Signal (Task.Task Effects.Never ())
 port tasks =
     app.tasks
 
 
+
+-- inbound ports
+
+
 port loadData : Signal LeagueInfo
+port urlHashChanged : Signal String
+
+
+
+-- outbound ports
+
+
 port scrapeSvrz : Signal String
 port scrapeSvrz =
     Signal.filterMap (\m -> m.scrapeLeagueFromHtml) "initial" app.model

@@ -50,10 +50,19 @@ var app = Elm.fullscreen(Elm.Razfaz,
         { loadData:
             { leagueId: "0"
             , games: []
-            , ranking: [] }
-            });
+            , ranking: [] },
+          urlHashChanged: ""
+        });
 
-// wire ports
+// ----------------------------------------------------------------------------
+// wire elm ports
+// ----------------------------------------------------------------------------
+window.onhashchange = function() {
+    console.log(location.hash);
+    app.ports.urlHashChanged.send(location.hash);
+}
+
+
 app.ports.scrapeSvrz.subscribe(function(leagueHtml) {
     console.log("scraping league...");
     var leagueInfo = scraper.scrape($, $.parseHTML(leagueHtml));
@@ -66,6 +75,8 @@ app.ports.loadLeagueInfo.subscribe(function(leagueId) {
         app.ports.loadData.send(leagueInfo);
     });
 });
+
+app.ports.urlHashChanged.send(location.hash);
 
 
 
