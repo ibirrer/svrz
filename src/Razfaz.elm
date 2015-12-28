@@ -79,7 +79,7 @@ defaultLeague =
 
 defaultTeam : Int
 defaultTeam =
-    25745
+    25649
 
 
 initialModel : Model
