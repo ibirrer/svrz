@@ -175,8 +175,8 @@ rankingHeaderRow =
         [ th [] [ text "" ]
         , th [] [ text "" ]
         , th [] [ text "BQ" ]
-        , th [] [ text "Spiele" ]
-        , th [] [ text "Punkte" ]
+        , th [] [ text "S" ]
+        , th [] [ text "P" ]
         ]
 
 

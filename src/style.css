@@ -1,6 +1,14 @@
+body {
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
 td {
   border-bottom: 1px solid #999;
   padding: 3px;
+}
+
+th {
+  text-align: right;
 }
 
 td.number {
