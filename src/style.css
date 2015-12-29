@@ -2,6 +2,11 @@ body {
   font-family: 'Roboto Condensed', sans-serif;
 }
 
+h2 {
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
 td {
   border-bottom: 1px solid #999;
   padding: 3px;
@@ -43,3 +48,5 @@ a:hover {
 a:hover {
   font-weight: bold;
 }
+
+
