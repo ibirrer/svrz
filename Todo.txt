@@ -14,6 +14,9 @@
     [ ] Scrape "team -> league" mapping from svrz.ch
 
 
+[ ] Use table-layout: fixed;
+    See https://css-tricks.com/fixing-tables-long-strings/
+
 
 [*] Use PouchDB for local and remote caching of league data
     [x] browser db

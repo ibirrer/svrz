@@ -22,6 +22,7 @@ import Task
 type alias RankingEntry =
     { rank : Int
     , team : String
+    , teamId : Int
     , games : Int
     , ballquotient : Float
     , points : Int
@@ -180,29 +181,15 @@ update action model =
 ---------------------------------------------------------------
 -- VIEW -------------------------------------------------------
 ---------------------------------------------------------------
--- mapToGamesResultModel : Model -> GamesTable.Games
--- mapToGamesResultModel model =
---     model.leagueInfo.games
---         |> List.filter (\g -> g.teamId == model.teamId || g.opponentId == model.teamId)
---         |> List.map
---             (\g ->
---                 { date = g.date
---                 , homeTeam = g.team
---                 , awayTeam = g.opponent
---                 , result = g.result
---                 }
---             )
-
-
 view : Address Action -> Model -> Html
 view address model =
     div
         []
         [ pageHeader
         , h2 [] [ text "Rangliste" ]
-        , rankingTable address model.leagueInfo.ranking
+        , rankingTable address model
         , h2 [] [ text "Spiele" ]
-        , (gamesTable model)
+        , gamesTable model
         ]
 
 
@@ -223,11 +210,11 @@ rankingHeaderRow =
         ]
 
 
-rankingRow : Address Action -> RankingEntry -> Html
-rankingRow address rankingEntry =
+rankingRow : Address Action -> Int -> RankingEntry -> Html
+rankingRow address teamId rankingEntry =
     let
         rankingStyle =
-            if rankingEntry.team == "Raz Faz" then
+            if rankingEntry.teamId == teamId then
                 [ ( "font-weight", "bold" ) ]
             else
                 []
@@ -242,12 +229,12 @@ rankingRow address rankingEntry =
             ]
 
 
-rankingTable : Address Action -> List RankingEntry -> Html
-rankingTable address ranking =
+rankingTable : Address Action -> Model -> Html
+rankingTable address model =
     table
         []
         ([ rankingHeaderRow ]
-            ++ List.map (rankingRow address) ranking
+            ++ List.map (rankingRow address model.teamId) model.leagueInfo.ranking
         )
 
 
@@ -316,8 +303,8 @@ gamesRow model game =
     in
         tr
             []
-            [ td [] [ text (game.team) ]
-            , td [] [ text (game.opponent) ]
+            [ td [] [ text (if  model.teamId == game.teamId then "A" else "H") ]
+            , td [] [ text (if model.teamId == game.teamId then game.opponent else game.team) ]
             , td
                 [ classList
                     [ ( resultToStyle gameResultState, True )
