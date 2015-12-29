@@ -23,9 +23,23 @@ table {
 
 .won {
   color: green;
+  font-weight: bold;
 }
 
 .lost {
   color: red;
+  font-weight: bold;
 }
 
+a,
+a:link,
+a:active,
+a:visited,
+a:hover {
+    color: #C9951E;
+    text-decoration: none;
+}
+
+a:hover {
+  font-weight: bold;
+}

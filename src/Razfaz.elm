@@ -218,11 +218,13 @@ rankingRow address teamId rankingEntry =
                 [ ( "font-weight", "bold" ) ]
             else
                 []
+
+        teamUrl = "#teams/" ++ toString rankingEntry.teamId
     in
         tr
             [ style rankingStyle ]
             [ td [] [ text ((toString rankingEntry.rank) ++ ".") ]
-            , td [] [ text rankingEntry.team ]
+            , td [] [ a [href teamUrl] [ text rankingEntry.team ]]
             , td [ class "number" ] [ text (toString rankingEntry.ballquotient) ]
             , td [ class "number" ] [ text (toString rankingEntry.games) ]
             , td [ class "number" ] [ text (toString rankingEntry.points) ]
