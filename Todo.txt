@@ -22,6 +22,9 @@
 [ ] Use table-layout: fixed;
     See https://css-tricks.com/fixing-tables-long-strings/
 
+[ ] Add link to svrz web site to have quickly check original data
+
+[ ] Add link to google maps
 
 [o] Use PouchDB for local and remote caching of league data
     [x] browser db

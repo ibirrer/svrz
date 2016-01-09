@@ -12,6 +12,7 @@ import Signal exposing (Address)
 import Effects exposing (Effects)
 import Http
 import Task
+import Util
 
 
 -----------------------------------
@@ -39,8 +40,7 @@ type alias Game =
     { id : Int
     , team : String
     , teamId : Int
-    , date : String
-    , time : String
+    , datetime : String
     , opponent : String
     , opponentId : Int
     , result : Maybe GameResult
@@ -327,7 +327,7 @@ gamesRow model game =
         tr
             []
             [ td [] [ text (homeAwayShortString model game) ]
-            , td [] [ text ("MO 10.01") ]
+            , td [] [ text (Util.dateShortString game.datetime) ]
             , td
                 []
                 [ text
