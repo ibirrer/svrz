@@ -7,7 +7,12 @@
 
 [x] focus on current team (games and ranking)
 
-[*] Also scrape and display all other leagues
+[o] Write tests
+    [o] elm
+    [ ] http://webdriver.io/
+    [ ] https://saucelabs.com/ free for open source projects
+
+[o] Also scrape and display all other leagues
     [x] Read state from url -> http://ibirrer.github.io/svrz/teams/{:teamId}
         This needs a mapping from team to its league, which needs to be scraped. Doing it manually for the moment.
     [ ] Both team and league id should be strings
@@ -18,7 +23,7 @@
     See https://css-tricks.com/fixing-tables-long-strings/
 
 
-[*] Use PouchDB for local and remote caching of league data
+[o] Use PouchDB for local and remote caching of league data
     [x] browser db
     [ ] sync to couchdb
     [ ] Hash leagueInfo results to allow that only one user needs
@@ -27,11 +32,6 @@
 [x] Use uglify to make dist size smaller
 
 [ ] Cleanup code (function names, action names, component per feature (ranking, games, data, ports, ?)
-
-[ ] Write tests
-    [ ] elm
-    [ ] http://webdriver.io/
-    [ ] https://saucelabs.com/ is free for open source projects
 
 [ ] DNS entry for http://razfaz.there.ch or http://svrz.tvwollishofen.ch or ?
 

@@ -181,6 +181,8 @@ update action model =
 ---------------------------------------------------------------
 -- VIEW -------------------------------------------------------
 ---------------------------------------------------------------
+
+
 view : Address Action -> Model -> Html
 view address model =
     div
@@ -224,7 +226,7 @@ rankingRow address teamId rankingEntry =
         tr
             [ style rankingStyle ]
             [ td [] [ text ((toString rankingEntry.rank) ++ ".") ]
-            , td [] [ a [href teamUrl] [ text rankingEntry.team ]]
+            , td [] [ a [ href teamUrl ] [ text rankingEntry.team ] ]
             , td [ class "number" ] [ text (toString rankingEntry.ballquotient) ]
             , td [ class "number" ] [ text (toString rankingEntry.games) ]
             , td [ class "number" ] [ text (toString rankingEntry.points) ]
@@ -298,6 +300,25 @@ gameResultAsString gameResultState =
             "n/a"
 
 
+homeAwayShortString : Model -> Game -> String
+homeAwayShortString model game =
+    if model.teamId == game.teamId then
+        "H"
+    else
+        "A"
+
+
+gamesHeaderRow : Html
+gamesHeaderRow =
+    tr
+        []
+        [ th [] [ text "" ]
+        , th [] [ text "" ]
+        , th [ style [ ( "text-align", "left" ) ] ] [ text "Gegner" ]
+        , th [] [ text "Resultat" ]
+        ]
+
+
 gamesRow : Model -> Game -> Html
 gamesRow model game =
     let
@@ -305,8 +326,17 @@ gamesRow model game =
     in
         tr
             []
-            [ td [] [ text (if  model.teamId == game.teamId then "A" else "H") ]
-            , td [] [ text (if model.teamId == game.teamId then game.opponent else game.team) ]
+            [ td [] [ text (homeAwayShortString model game) ]
+            , td [] [ text ("MO 10.01") ]
+            , td
+                []
+                [ text
+                    (if model.teamId == game.teamId then
+                        game.opponent
+                     else
+                        game.team
+                    )
+                ]
             , td
                 [ classList
                     [ ( resultToStyle gameResultState, True )
@@ -324,7 +354,11 @@ gamesTable model =
             model.leagueInfo.games
                 |> List.filter (\g -> g.teamId == model.teamId || g.opponentId == model.teamId)
     in
-        table [] (List.map (gamesRow model) (filteredGames))
+        table
+            []
+            ([ gamesHeaderRow ]
+                ++ (List.map (gamesRow model) (filteredGames))
+            )
 
 
 
