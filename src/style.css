@@ -1,5 +1,6 @@
 body {
   font-family: 'Roboto Condensed', sans-serif;
+  color: #333;
 }
 
 h2 {
@@ -8,8 +9,23 @@ h2 {
 }
 
 td {
-  border-bottom: 1px solid #999;
   padding: 3px;
+}
+
+tr:nth-child(even) {
+   background-color: #F6EFDF;
+}
+
+#games td {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+td a {
+  display: block;
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 th {
@@ -28,12 +44,12 @@ table {
 }
 
 .won {
-  color: green;
+  color: #157415;
   font-weight: bold;
 }
 
 .lost {
-  color: red;
+  color: #D44247;
   font-weight: bold;
 }
 

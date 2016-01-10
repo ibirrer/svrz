@@ -355,7 +355,7 @@ gamesTable model =
                 |> List.filter (\g -> g.teamId == model.teamId || g.opponentId == model.teamId)
     in
         table
-            []
+            [id "games"]
             ([ gamesHeaderRow ]
                 ++ (List.map (gamesRow model) (filteredGames))
             )
