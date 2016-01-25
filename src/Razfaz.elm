@@ -59,6 +59,7 @@ type alias Model =
     , scrapeLeagueFromHtml : Maybe String
     , loadLeagueInfo : Maybe String
     , teamId : Int
+    , pageType : PageType
     }
 
 
@@ -93,6 +94,7 @@ initialModel =
     , scrapeLeagueFromHtml = Nothing
     , loadLeagueInfo = Nothing
     , teamId = defaultTeam
+    , pageType = TeamPage
     }
 
 
@@ -100,6 +102,11 @@ initialModel =
 ---------------------------------------------------------------
 -- UPDATE -----------------------------------------------------
 ---------------------------------------------------------------
+
+
+type PageType
+    = TeamPage
+    | GamePage
 
 
 type Action
@@ -119,6 +126,19 @@ getLeagueData leagueId =
             |> Task.toMaybe
             |> Task.map LegueDataReceived
             |> Effects.task
+
+
+getTeamIdFromHash : String -> Int
+getTeamIdFromHash hash =
+    let
+        teamIdString = String.dropLeft 7 hash
+    in
+        case String.toInt teamIdString of
+            Err msg ->
+                defaultTeam
+
+            Ok teamId' ->
+                teamId'
 
 
 update : Action -> Model -> ( Model, Effects Action )
@@ -155,24 +175,21 @@ update action model =
 
         UrlHashChanged hash ->
             let
-                teamId =
+                ( teamId, pageType ) =
                     if Regex.contains (regex "^#teams/[0-9]{5}$") hash then
-                        let
-                            teamIdString = String.dropLeft 7 hash
-                        in
-                            case String.toInt teamIdString of
-                                Err msg ->
-                                    defaultTeam
-
-                                Ok teamId' ->
-                                    teamId'
+                        ( getTeamIdFromHash (hash), TeamPage )
+                    else if Regex.contains (regex "^#games/[0-9]{5}$") hash then
+                        ( defaultTeam, GamePage )
                     else
-                        defaultTeam
+                        ( defaultTeam, TeamPage )
 
                 leagueId =
                     Maybe.withDefault defaultLeague (Dict.get teamId teamToLeagueMapping)
             in
-                ( { model | teamId = teamId }
+                ( { model
+                    | teamId = teamId
+                    , pageType = pageType
+                  }
                 , Effects.task (Task.succeed (GetFromPouchDb leagueId))
                 )
 
@@ -185,14 +202,27 @@ update action model =
 
 view : Address Action -> Model -> Html
 view address model =
-    div
-        []
-        [ pageHeader
-        , h2 [] [ text "Rangliste" ]
-        , rankingTable address model
-        , h2 [] [ text "Spiele" ]
-        , gamesTable model
-        ]
+    case model.pageType of
+        TeamPage ->
+            div
+                []
+                [ pageHeader
+                , h2 [] [ text "Rangliste" ]
+                , rankingTable address model
+                , h2 [] [ text "Spiele" ]
+                , gamesTable model
+                ]
+
+        GamePage ->
+            div
+                []
+                [ pageHeader
+                , h2 [] [ text "Game Details" ]
+                , h4 [] [ text "im Team" ]
+                , h4 [] [ text "Nicht im Team" ]
+                , h4 [] [ text "Abgemeldet" ]
+
+                ]
 
 
 pageHeader : Html
@@ -355,7 +385,7 @@ gamesTable model =
                 |> List.filter (\g -> g.teamId == model.teamId || g.opponentId == model.teamId)
     in
         table
-            [id "games"]
+            [ id "games" ]
             ([ gamesHeaderRow ]
                 ++ (List.map (gamesRow model) (filteredGames))
             )

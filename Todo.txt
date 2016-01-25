@@ -7,6 +7,8 @@
 
 [x] focus on current team (games and ranking)
 
+[*] Page for attendance
+
 [o] Write tests
     [o] elm
     [ ] http://webdriver.io/
@@ -48,6 +50,8 @@
 
 [ ] Remove dependency to jquery
     File size of razfaz.js file in the dist is still pretty high (120KB) despite uglify and gzip (done by github pages)
+
+[ ] Send emails to all players of a game/team
 
 [-] Scrape html in elm
     Tried, but parsing html is very slow when doing it in js, the browser is much better at it.
