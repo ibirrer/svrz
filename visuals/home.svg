@@ -26,8 +26,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1"
-     inkscape:cx="158.36052"
-     inkscape:cy="645.85391"
+     inkscape:cx="136.36052"
+     inkscape:cy="-79.146086"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -799,7 +799,7 @@
        height="69.700531"
        width="304.05591"
        id="rect5867"
-       style="opacity:1;fill:#73ca00;fill-opacity:1;stroke:none;stroke-width:3.54330707;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+       style="opacity:1;fill:#63b722;fill-opacity:1;stroke:none;stroke-width:3.54330707;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <g
        style="fill:#e2e2e2;fill-opacity:1"
        transform="matrix(0.12129043,0,0,0.12129043,-290.21263,320.04627)"
@@ -999,11 +999,11 @@
        id="rect6849"
        style="opacity:1;fill:#333333;fill-opacity:1;stroke:none;stroke-width:3.54330707;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
     <g
-       style="fill:#e2e2e2;fill-opacity:1"
+       style="fill:#177e89;fill-opacity:1"
        id="g6851"
        transform="matrix(-0.02617938,0,0,-0.02617938,-281.74251,1239.3031)">
       <path
-         style="fill:#e2e2e2;fill-opacity:1"
+         style="fill:#177e89;fill-opacity:1"
          d="m 38.25,85.496094 c -26.562494,0 -48.378906,21.816416 -48.378906,48.378906 l 0,286.875 c 0,26.56176 21.816091,48.37891 48.378906,48.37891 l 478.125,0 c 26.56208,0 48.37891,-21.81683 48.37891,-48.37891 l 0,-286.875 c 0,-26.56282 -21.81715,-48.378906 -48.37891,-48.378906 z m 0,39.382816 219.37109,0 0,57.63476 c -43.24151,8.59443 -76.5,48.75017 -76.5,94.79883 0,46.17221 33.58579,84.56338 76.5,94.48633 l 0,57.94531 -219.37109,0 -0.0078,0 c -4.157948,-0.004 -8.988282,-3.15019 -8.988282,-8.99414 l 0,-47.24609 -1.2e-5,-192.38282 0,-47.24609 c 0,-4.1597 3.148485,-8.99609 8.996094,-8.99609 z m 258.75391,0.002 219.37109,0 c 4.1597,0 8.99609,3.14848 8.99609,8.99609 l 0,47.24414 c 2.12514,86.55372 10.78955,106.4399 0,192.38277 l 0,47.24609 c 0,4.1597 -3.14848,8.99609 -8.99609,8.99609 l -219.37109,0 0,-57.63476 c 43.24151,-8.59443 76.5,-48.75017 76.5,-94.79883 0,-46.17221 -33.58579,-84.56338 -76.5,-94.48633 z m 0,98.30859 c 21.56513,7.63018 37.11718,28.8336 37.11718,54.12305 0,25.17248 -15.26093,45.09168 -37.11718,53.53516 z m -39.38282,0.58789 0,107.65821 c -21.56513,-7.63018 -37.11718,-28.8336 -37.11718,-54.12305 0,-25.17248 15.26093,-45.09168 37.11718,-53.53516 z"
          id="path6853"
          inkscape:connector-curvature="0"
@@ -1171,7 +1171,7 @@
        style="opacity:1;fill:#eeeeee;fill-opacity:1;stroke:#c7c7c7;stroke-width:1;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.25px;line-height:125%;font-family:Oswald;-inkscape-font-specification:'Oswald, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#e9e9e9;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15.25px;line-height:125%;font-family:Oswald;-inkscape-font-specification:'Oswald, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#e9e9e9;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        x="-270.97186"
        y="1070.1195"
        id="text6911"
@@ -1183,61 +1183,61 @@
     <g
        id="g6915"
        transform="matrix(0.44296344,0,0,0.44296344,-296.52742,1057.1131)"
-       style="fill:#e2e2e2;fill-opacity:1">
+       style="fill:#177e89;fill-opacity:1">
       <g
          id="g6917"
-         style="fill:#e2e2e2;fill-opacity:1">
+         style="fill:#177e89;fill-opacity:1">
         <path
            id="path6919"
            d="M 24.791,4.451 C 24.811,3.503 24.775,2.904 24.775,2.904 l -9.264,-0.007 0,0 -0.047,0 -0.047,0 0,0 -9.265,0.007 c 0,0 -0.035,0.599 -0.015,1.547 L 0,4.451 0,5.463 c 0,0.231 0.039,5.68 3.402,8.665 1.403,1.245 3.153,1.871 5.216,1.872 0.312,0 0.633,-0.021 0.958,-0.049 1.172,1.605 2.526,2.729 4.049,3.289 l 0,4.445 -4.471,0 0,2.784 -1.477,0 0,1.561 7.74,0 0.094,0 7.74,0 0,-1.56 -1.478,0 0,-2.784 -4.471,0 0,-4.445 c 1.522,-0.56 2.877,-1.684 4.049,-3.289 0.327,0.028 0.648,0.048 0.96,0.048 2.062,-0.002 3.812,-0.627 5.215,-1.873 3.363,-2.985 3.402,-8.434 3.402,-8.665 l 0,-1.011 -6.137,0 z M 4.752,12.619 C 2.831,10.919 2.263,8.009 2.095,6.475 l 4.158,0 c 0.176,1.911 0.59,4.292 1.545,6.385 0.175,0.384 0.359,0.748 0.547,1.104 C 6.912,13.909 5.706,13.462 4.752,12.619 Z m 21.424,0 c -0.953,0.844 -2.16,1.29 -3.592,1.345 0.188,-0.355 0.372,-0.72 0.547,-1.104 0.955,-2.093 1.369,-4.474 1.544,-6.385 l 4.158,0 c -0.168,1.533 -0.735,4.443 -2.657,6.144 z"
            inkscape:connector-curvature="0"
-           style="fill:#e2e2e2;fill-opacity:1" />
+           style="fill:#177e89;fill-opacity:1" />
       </g>
       <g
          id="g6921"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6923"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6925"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6927"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6929"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6931"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6933"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6935"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6937"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6939"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6941"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6943"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6945"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6947"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
       <g
          id="g6949"
-         style="fill:#e2e2e2;fill-opacity:1" />
+         style="fill:#177e89;fill-opacity:1" />
     </g>
     <rect
        style="opacity:1;fill:#73ca00;fill-opacity:1;stroke:none;stroke-width:3.54330707;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
@@ -1325,12 +1325,12 @@
          id="tspan6993">Zürimeisterschaft</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:Oswald;-inkscape-font-specification:'Oswald, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#e9e9e9;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:Oswald;-inkscape-font-specification:'Oswald, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#e9e9e9;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        x="-237.72591"
        y="1031.512"
        id="text6995"
        sodipodi:linespacing="125%"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:Oswald;-inkscape-font-specification:'Oswald, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:Oswald;-inkscape-font-specification:'Oswald, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#e9e9e9;fill-opacity:1;"
          sodipodi:role="line"
          x="-237.72591"
          y="1031.512"
@@ -1413,11 +1413,11 @@
          x="551.01105"
          sodipodi:role="line">4</tspan></text>
     <g
-       style="stroke:#1a1a1a;stroke-opacity:1"
+       style="stroke:#177e89;stroke-opacity:1"
        transform="matrix(1.0128713,0,0,1.0021247,614.9998,678.30235)"
        id="g7027">
       <path
-         style="display:inline;fill:#333333;fill-opacity:1;stroke:#1a1a1a;stroke-width:3.97028756;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="display:inline;fill:#333333;fill-opacity:1;stroke:#177e89;stroke-width:3.97028756;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="m -44.4174,321.3622 12.8348,0"
          id="path7029"
          inkscape:connector-curvature="0" />
@@ -1425,9 +1425,9 @@
          inkscape:connector-curvature="0"
          id="path7031"
          d="m -44.4174,327.3622 12.8348,0"
-         style="display:inline;fill:#333333;fill-opacity:1;stroke:#1a1a1a;stroke-width:3.97028756;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+         style="display:inline;fill:#333333;fill-opacity:1;stroke:#177e89;stroke-width:3.97028756;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
       <path
-         style="display:inline;fill:#333333;fill-opacity:1;stroke:#1a1a1a;stroke-width:3.97028756;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         style="display:inline;fill:#333333;fill-opacity:1;stroke:#177e89;stroke-width:3.97028756;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
          d="m -44.4174,333.3622 12.8348,0"
          id="path7033"
          inkscape:connector-curvature="0" />
@@ -1437,13 +1437,13 @@
        id="text7035"
        y="1013.2234"
        x="472.27411"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:Oswald;-inkscape-font-specification:'Oswald, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#1a1a1a;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:Oswald;-inkscape-font-specification:'Oswald, Normal';text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#177e89;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;"
        xml:space="preserve"><tspan
          id="tspan7037"
          y="1013.2234"
          x="472.27411"
          sodipodi:role="line"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:Oswald;-inkscape-font-specification:'Oswald, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#1a1a1a;fill-opacity:1;">Liga wechseln</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:15px;line-height:125%;font-family:Oswald;-inkscape-font-specification:'Oswald, Normal';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:#177e89;fill-opacity:1;">Liga wechseln</tspan></text>
     <rect
        style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:0;stroke-dasharray:none;stroke-opacity:1"
        id="rect7047"
