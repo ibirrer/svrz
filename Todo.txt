@@ -20,6 +20,10 @@
     [ ] Both team and league id should be strings
     [ ] Scrape "team -> league" mapping from svrz.ch
 
+[ ] Log client side errors to couchdb
+    [ ] https://trackjs.com/ too expensive (30.-/m) - but might be free for opensource projects
+
+[ ] Possible replacement for https://aws.amazon.com/lambda/ crossorigin.me
 
 [ ] Use table-layout: fixed;
     See https://css-tricks.com/fixing-tables-long-strings/
