@@ -7,7 +7,11 @@
 
 [x] focus on current team (games and ranking)
 
-[*] Page for attendance
+[*] Game Details
+    [ ] Fetch the game details in parallel instead of fetching them in sequence (Task.sequence)
+        See open issue on elm: https://github.com/elm-lang/core/issues/223
+        using Effects-Extra together with sending to mailbox might work. See https://www.reddit.com/r/elm/comments/3xtxjx/periodic_http_request_to_refresh_data/
+        for an example on how to send a task to a mailbox
 
 [o] Write tests
     [o] elm
@@ -19,6 +23,8 @@
         This needs a mapping from team to its league, which needs to be scraped. Doing it manually for the moment.
     [ ] Both team and league id should be strings
     [ ] Scrape "team -> league" mapping from svrz.ch
+
+[ ] Show the date of the last data update in footer. E.g. "Last data update: 12.2.2016 20:33"
 
 [ ] Log client side errors to couchdb
     [ ] https://trackjs.com/ too expensive (30.-/m) - but might be free for opensource projects

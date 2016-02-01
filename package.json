@@ -10,7 +10,7 @@
     "watch:elm": "watch-run -i -p 'src/*.elm' 'elm-make src/Razfaz.elm --yes --output build/razfaz.js'",
     "watch:browserify": "watchify src/main.js -o build/main.js",
     "watch:assets": "watch-run -i -p 'src/*.html,src/*.css' 'copyfiles -u 1 src/*.css src/*.html build'",
-    "watch": "npm run watch:elm & npm run watch:browserify & npm run watch:assets & npm run watch:test",
+    "watch": "npm run watch:elm & npm run watch:browserify & npm run watch:assets",
 
     "build:elm": "elm-make src/Razfaz.elm --yes --output build/razfaz.js",
     "build:browserify": "browserify src/main.js --outfile build/main.js",
@@ -41,6 +41,6 @@
   "dependencies": {
     "jquery": "^2.1.4",
     "pouchdb": "^5.1.0",
-    "svrz-scraper": "git+https://github.com/ibirrer/svrz-scraper.git#v0.0.6"
+    "svrz-scraper": "git+https://github.com/ibirrer/svrz-scraper.git#v0.1.0"
   }
 }

@@ -23,7 +23,7 @@ var storeLeagueInfo = function(leagueInfo) {
                 });
         }).catch(function(err) {
             // insert
-            db.put(leagueInfo)
+            return db.put(leagueInfo)
                 .then(function(response) {
                     console.log("inserted");
                 }).catch(function(err) {
@@ -32,25 +32,23 @@ var storeLeagueInfo = function(leagueInfo) {
         });
 }
 
-var loadLeagueInfo = function(leagueId, callback) {
+var loadLeagueInfo = function(leagueId) {
     var db = new PouchDB(leagueId);
-
-    db.get(leagueId)
-        .then(function(leagueInfo) {
-            // update
-            callback(leagueInfo);
-        }).catch(function(err) {
-            console.log("failed to load leagueInfo. ", err);
-        });
+    return db.get(leagueId);
 }
 
 
 // start elm app
 var app = Elm.fullscreen(Elm.Razfaz,
-        { loadData:
+        { scrapedLeagueHtml:
             { leagueId: "0"
             , games: []
             , ranking: [] },
+          setLeagueData:
+            { leagueId: "0"
+            , games: []
+            , ranking: [] },
+          errorGetFromPouchDb: "none",
           urlHashChanged: ""
         });
 
@@ -58,22 +56,42 @@ var app = Elm.fullscreen(Elm.Razfaz,
 // wire elm ports
 // ----------------------------------------------------------------------------
 window.onhashchange = function() {
-    console.log(location.hash);
     app.ports.urlHashChanged.send(location.hash);
 }
 
 
-app.ports.scrapeSvrz.subscribe(function(leagueHtml) {
-    console.log("scraping league...");
+app.ports.scrapeLeagueFromHtml.subscribe(function(leagueHtml) {
     var leagueInfo = scraper.scrape($, $.parseHTML(leagueHtml));
-    storeLeagueInfo(leagueInfo);
-    app.ports.loadData.send(leagueInfo);
+    // storeLeagueInfo(leagueInfo); // TODO: do this in elm
+    app.ports.scrapedLeagueHtml.send(leagueInfo);
 });
 
-app.ports.loadLeagueInfo.subscribe(function(leagueId) {
-    loadLeagueInfo(leagueId, function(leagueInfo) {
-        app.ports.loadData.send(leagueInfo);
-    });
+
+app.ports.scrapeGamesDetailsFromHtml.subscribe(function(gamesDetailsHtml) {
+    // var result = scraper.scrapeDetail($, $.parseHTML(gamesDetailsHtml[7]))
+
+
+    var result = gamesDetailsHtml.map(function(gameDetail) {
+        try {
+            return scraper.scrapeDetail($, $.parseHTML(gameDetail));
+        } catch (err) {
+            console.log(gameDetail);
+            console.log(err);
+            return "ERROR"
+        }
+        });
+
+    console.log(result);
+});
+
+app.ports.getFromCouchDb.subscribe(function(leagueId) {
+    loadLeagueInfo(leagueId)
+        .then(function(leagueInfo) {
+            app.ports.setLeagueData.send(leagueInfo);
+        })
+        .catch(function(err) {
+            app.ports.errorGetFromPouchDb.send(err.reason);
+        });
 });
 
 app.ports.urlHashChanged.send(location.hash);
