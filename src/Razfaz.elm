@@ -187,12 +187,11 @@ getTeamIdFromHash hash =
                 teamId'
 
 
-
 type alias AbstractGame a =
     { a | id : Int, setsResults : Maybe SetResult, gym : Maybe Gym }
 
 
-mergeGames : (AbstractGame a) -> Maybe GameDetail -> (AbstractGame a)
+mergeGames : AbstractGame a -> Maybe GameDetail -> AbstractGame a
 mergeGames game gameDetail =
     case gameDetail of
         Just gameDetail' ->
@@ -313,10 +312,32 @@ update action model =
                 )
 
 
+flatMap : (a -> Maybe b) -> Maybe a -> Maybe b
+flatMap callback maybe =
+    Maybe.andThen maybe callback
+
+
 
 ---------------------------------------------------------------
 -- VIEW -------------------------------------------------------
 ---------------------------------------------------------------
+
+
+gameDetail model =
+    let
+        setResult =
+            model.leagueInfo.games
+                |> List.head
+                |> flatMap .setsResults
+    in
+        case setResult of
+            Just setResult' ->
+                (setResult'.home |> List.map toString |> String.join " ")
+                    ++ " "
+                    ++ (setResult'.away |> List.map toString |> String.join " ")
+
+            Nothing ->
+                "n/a"
 
 
 view : Address Action -> Model -> Html
@@ -336,10 +357,8 @@ view address model =
             div
                 []
                 [ pageHeader
-                , h2 [] [ text "Game Details" ]
-                , h4 [] [ text "im Team" ]
-                , h4 [] [ text "Nicht im Team" ]
-                , h4 [] [ text "Abgemeldet" ]
+                , h2 [] [ text "Spiele Details" ]
+                , p [] [ text (gameDetail model) ]
                 ]
 
 
