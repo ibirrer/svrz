@@ -1,0 +1,53 @@
+# Hash Changed
+    a. #teams/{teamId} [x]
+        a. leagueId found [x]
+            a. leagueId changed [x]
+                1. Try to load leagueData from PouchDB [x]
+                    a. leagueData found [x]
+                        1. Display leagueData (offline first) [x]
+                        2. -> Update leagueData from svrz.ch [x]
+                    b. leagueData not found or PouchDB not available
+                        1. -> Update leagueData from svrz.ch [x]
+            b. leagueId unchanged [x]
+                1. do nothing [x]
+        b. leagueId not found
+            1. redirect to #teams/{defaultTeamId}
+    b. #games/{gameId}
+    c. catch all
+        1. redirect to #teams/{defaultTeamId}
+
+# Update leagueData from svrz.ch
+    1. Check if current data is already up to date (indication
+        could be the data of the first game withouth any results and if all details are available) [ ]
+
+        a. data is up to date [ ]
+            1. Do nothing [ ]
+        b. data is not up to data [x]
+            1. HTTP GET request to league overview (contains ranking and games) [x]
+                a. Error (data available from PouchDB) [ ]
+                    1. Log the error [ ]
+                b. Error (data not available in PouchDB) [ ]
+                    1. Display error message in browser. Ideally with the request URL that failed [ ]
+                c. Success [x]
+                    1. Scrape leagueInfo (using svrz-scraper) [x]
+                        a. Error (see error cases above) [ ]
+                        b. Success [x]
+                            1. Merge leagueInfo with current leagueInfo (do not overwrite detail data) [ ]
+                            2. -> Update leagueData Details from svrz.ch [x]
+
+# Update leagueData Details from svrz.ch
+    1. HTTP GET request to all detail pages [x]
+        a. Error [ ]
+            1. Log the error [ ]
+        b. Success [x]
+            1. Scrape all detail pages [x]
+                a. Error [ ]
+                    1. Log error [ ]
+                b. Success [x]
+                    1. Merge detail data with leagueInfo [ ]
+                        1. Should make links available in games if details were not available before
+                    2. Store data in PouchDB [ ]
+                        a. Error
+                            1. Log error
+                        b. Success
+                            1. Done

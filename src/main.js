@@ -32,12 +32,6 @@ var storeLeagueInfo = function(leagueInfo) {
         });
 }
 
-var loadLeagueInfo = function(leagueId) {
-    var db = new PouchDB(leagueId);
-    return db.get(leagueId);
-}
-
-
 // start elm app
 var app = Elm.fullscreen(Elm.Razfaz,
         { scrapedLeagueHtml:
@@ -49,6 +43,7 @@ var app = Elm.fullscreen(Elm.Razfaz,
             , games: []
             , ranking: [] },
           errorGetFromPouchDb: "none",
+          scrapedGamesDetailsFromHtml: [],
           urlHashChanged: ""
         });
 
@@ -62,15 +57,11 @@ window.onhashchange = function() {
 
 app.ports.scrapeLeagueFromHtml.subscribe(function(leagueHtml) {
     var leagueInfo = scraper.scrape($, $.parseHTML(leagueHtml));
-    // storeLeagueInfo(leagueInfo); // TODO: do this in elm
     app.ports.scrapedLeagueHtml.send(leagueInfo);
 });
 
 
 app.ports.scrapeGamesDetailsFromHtml.subscribe(function(gamesDetailsHtml) {
-    // var result = scraper.scrapeDetail($, $.parseHTML(gamesDetailsHtml[7]))
-
-
     var result = gamesDetailsHtml.map(function(gameDetail) {
         try {
             return scraper.scrapeDetail($, $.parseHTML(gameDetail));
@@ -80,14 +71,22 @@ app.ports.scrapeGamesDetailsFromHtml.subscribe(function(gamesDetailsHtml) {
             return "ERROR"
         }
         });
-
-    console.log(result);
+    app.ports.scrapedGamesDetailsFromHtml.send(result);
 });
 
 app.ports.getFromCouchDb.subscribe(function(leagueId) {
-    loadLeagueInfo(leagueId)
+    var db = new PouchDB(leagueId);
+    db.get(leagueId)
         .then(function(leagueInfo) {
-            app.ports.setLeagueData.send(leagueInfo);
+            try {
+                app.ports.setLeagueData.send(leagueInfo);
+                return true;
+            } catch (err) {
+                return db.remove(leagueInfo)
+                    .then(function() {
+                        app.ports.errorGetFromPouchDb.send("leagueInfo schema changed");
+                    });
+            }
         })
         .catch(function(err) {
             app.ports.errorGetFromPouchDb.send(err.reason);
@@ -95,9 +94,3 @@ app.ports.getFromCouchDb.subscribe(function(leagueId) {
 });
 
 app.ports.urlHashChanged.send(location.hash);
-
-
-
-
-
-

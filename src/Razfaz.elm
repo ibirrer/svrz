@@ -37,6 +37,18 @@ type alias GameResult =
     }
 
 
+type alias SetResult =
+    { home : List Int
+    , away : List Int
+    }
+
+
+type alias Gym =
+    { name : String
+    , map : String
+    }
+
+
 type alias Game =
     { id : Int
     , team : String
@@ -45,6 +57,8 @@ type alias Game =
     , opponent : String
     , opponentId : Int
     , result : Maybe GameResult
+    , setsResults : Maybe SetResult
+    , gym : Maybe Gym
     }
 
 
@@ -63,6 +77,14 @@ type alias Model =
     , teamId : Int
     , pageType : PageType
     }
+
+
+type alias GamesDetails =
+    List
+        { gameId : Int
+        , setsResults : Maybe SetResult
+        , gym : Gym
+        }
 
 
 teamToLeagueMapping : Dict Int String
@@ -121,6 +143,7 @@ type Action
     | ErrorGetFromCouchDb String
     | GotGamesDetailsHtmlFromSvrz (Maybe (List String))
     | GetFromPouchDb String
+    | ScrapedGamesDetailsFromHtml GamesDetails
     | UrlHashChanged String
 
 
@@ -140,11 +163,11 @@ gameDetailUrl gameId =
     "https://crossorigin.me/http://www.svrz.ch/index.php?id=73&nextPage=3&game_ID=" ++ (toString gameId)
 
 
-
 getGamesDetailsHtmlFromSvrz : List Int -> Effects Action
 getGamesDetailsHtmlFromSvrz gameIds =
     let
-        urls = gameIds |> List.map gameDetailUrl |> Debug.log "urls"
+        urls = gameIds |> List.map gameDetailUrl
+
         tasks = urls |> List.map Http.getString
     in
         Task.sequence tasks
@@ -179,22 +202,20 @@ update action model =
             , Effects.none
             )
 
-
         GotFromPouchDb newLeagueInfo ->
             ( { model
                 | leagueInfo = newLeagueInfo
                 , getFromCouchDb = Nothing
-                }
+              }
             , getLeagueHtmlFromSvrz newLeagueInfo.leagueId
             )
 
         ErrorGetFromCouchDb error ->
             ( { model
-                    |  getFromCouchDb = Nothing
+                | getFromCouchDb = Nothing
               }
             , getLeagueHtmlFromSvrz model.leagueInfo.leagueId
             )
-
 
         GotLeagueHtmlFromSvrz leagueHtml ->
             ( { model
@@ -208,7 +229,7 @@ update action model =
                 | leagueInfo = newLeagueInfo
                 , scrapeLeagueFromHtml = Nothing
               }
-            , getGamesDetailsHtmlFromSvrz(newLeagueInfo.games |> List.map .id)
+            , getGamesDetailsHtmlFromSvrz (newLeagueInfo.games |> List.map .id)
             )
 
         GotGamesDetailsHtmlFromSvrz gamesDetailsHtml ->
@@ -216,59 +237,14 @@ update action model =
             , Effects.none
             )
 
-        {-
-            # Hash Changed
-                a. #teams/{teamId} [x]
-                    a. leagueId found [x]
-                        a. leagueId changed [x]
-                            1. Try to load leagueData from PouchDB [x]
-                                a. leagueData found [x]
-                                    1. Display leagueData (offline first) [x]
-                                    2. -> Update leagueData from svrz.ch [x]
-                                b. leagueData not found or PouchDB not available
-                                    1. -> Update leagueData from svrz.ch [x]
-                        b. leagueId unchanged [x]
-                            1. do nothing [x]
-                    b. leagueId not found
-                        1. redirect to #teams/{defaultTeamId}
-                b. #games/{gameId}
-                c. catch all
-                    1. redirect to #teams/{defaultTeamId}
+        ScrapedGamesDetailsFromHtml gamesDetails ->
+            let
+                l = gamesDetails |> Debug.log "games details"
+            in
+                ( { model | scrapeGamesDetailsFromHtml = Nothing }
+                , Effects.none
+                )
 
-            # Update leagueData from svrz.ch
-                1. Check if current data is already up to date (indication
-                   could be the data of the first game withouth any results and if all details are available) [ ]
-
-                    a. data is up to date [ ]
-                        1. Do nothing [ ]
-                    b. data is not up to data [x]
-                        1. HTTP GET request to league overview (contains ranking and games) [x]
-                            a. Error (data available from PouchDB) [ ]
-                                1. Log the error [ ]
-                            b. Error (data not available in PouchDB) [ ]
-                                1. Display error message in browser. Ideally with the request URL that failed [ ]
-                            c. Success [x]
-                                1. Scrape leagueInfo (using svrz-scraper) [x]
-                                    a. Error (see error cases above) [ ]
-                                    b. Success [x]
-                                        1. Merge leagueInfo with current leagueInfo (do not overwrite detail data) [ ]
-                                        2. -> Update leagueData Details from svrz.ch [x]
-
-            # Update leagueData Details from svrz.ch
-                1. HTTP GET request to all detail pages [x]
-                    a. Error [ ]
-                        1. Log the error [ ]
-                    b. Success [ ]
-                        1. Scrape all detail pages [ ]
-                            a. Error [ ]
-                                1. Log error [ ]
-                            b. Success [ ]
-                                1. Merge detail data with leagueInfo [ ]
-                                2. Store data in PouchDB [ ]
-                                    a. Error
-                                        1. Log error
-                                    b. Success
-        -}
         UrlHashChanged hash ->
             let
                 ( teamId, pageType ) =
@@ -280,8 +256,7 @@ update action model =
                         ( defaultTeam, TeamPage )
 
                 leagueId =
-                    Maybe.withDefault defaultLeague (Dict.get teamId teamToLeagueMapping) |> Debug.log "leagueId"
-
+                    Maybe.withDefault defaultLeague (Dict.get teamId teamToLeagueMapping)
 
                 effect =
                     if leagueId /= model.leagueInfo.leagueId then
@@ -290,8 +265,8 @@ update action model =
                         Effects.none
 
                 leagueInfo = model.leagueInfo
-                leagueInfo'  = { leagueInfo | leagueId = leagueId }
 
+                leagueInfo' = { leagueInfo | leagueId = leagueId }
             in
                 ( { model
                     | teamId = teamId
@@ -329,7 +304,6 @@ view address model =
                 , h4 [] [ text "im Team" ]
                 , h4 [] [ text "Nicht im Team" ]
                 , h4 [] [ text "Abgemeldet" ]
-
                 ]
 
 
@@ -515,6 +489,7 @@ app =
             [ (Signal.map (\leagueInfo -> GotFromPouchDb leagueInfo) setLeagueData)
             , (Signal.map (\error -> ErrorGetFromCouchDb error) errorGetFromPouchDb)
             , (Signal.map (\leagueInfo -> ScrapedLeagueHtml leagueInfo) scrapedLeagueHtml)
+            , (Signal.map (\gamesDetails -> ScrapedGamesDetailsFromHtml gamesDetails) scrapedGamesDetailsFromHtml)
             , (Signal.map (\hash -> UrlHashChanged hash) urlHashChanged)
             ]
         }
@@ -537,9 +512,11 @@ port tasks =
 
 -- inbound ports (functions that can be called from js)
 
+
 port errorGetFromPouchDb : Signal String
 port setLeagueData : Signal LeagueInfo
 port scrapedLeagueHtml : Signal LeagueInfo
+port scrapedGamesDetailsFromHtml : Signal GamesDetails
 port urlHashChanged : Signal String
 
 

@@ -4,7 +4,7 @@ Deployed at http://ibirrer.github.io/svrz/
 Dev
 
     npm run watch # elm compile, browserify etc. on file change
-    npm run format # format code
+    npm run format # format elm code
 
 
 Http Server
@@ -14,4 +14,4 @@ Http Server
 
 Publish
 
-    ./dist.sh
+    ./publish.sh
