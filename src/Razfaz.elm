@@ -6,7 +6,6 @@ import Html.Events exposing (..)
 import List
 import String exposing (toUpper, repeat, trimRight)
 import Dict exposing (Dict)
-import StartApp
 import Regex exposing (regex)
 import Signal exposing (Address)
 import Effects exposing (Effects)
@@ -79,12 +78,11 @@ type alias Model =
     }
 
 
-type alias GamesDetails =
-    List
-        { gameId : Int
-        , setsResults : Maybe SetResult
-        , gym : Gym
-        }
+type alias GameDetail =
+    { gameId : Int
+    , setsResults : Maybe SetResult
+    , gym : Gym
+    }
 
 
 teamToLeagueMapping : Dict Int String
@@ -143,7 +141,7 @@ type Action
     | ErrorGetFromCouchDb String
     | GotGamesDetailsHtmlFromSvrz (Maybe (List String))
     | GetFromPouchDb String
-    | ScrapedGamesDetailsFromHtml GamesDetails
+    | ScrapedGamesDetailsFromHtml (List GameDetail)
     | UrlHashChanged String
 
 
@@ -187,6 +185,49 @@ getTeamIdFromHash hash =
 
             Ok teamId' ->
                 teamId'
+
+
+
+type alias AbstractGame a =
+    { a | id : Int, setsResults : Maybe SetResult, gym : Maybe Gym }
+
+
+mergeGames : (AbstractGame a) -> Maybe GameDetail -> (AbstractGame a)
+mergeGames game gameDetail =
+    case gameDetail of
+        Just gameDetail' ->
+            { game
+                | setsResults = gameDetail'.setsResults
+                , gym = Just gameDetail'.gym
+            }
+
+        Nothing ->
+            game
+
+
+getGameDetail : List GameDetail -> Int -> Maybe GameDetail
+getGameDetail gameDetails gameId =
+    gameDetails
+        |> List.filter (\g -> g.gameId == gameId)
+        |> List.head
+
+
+mergeGameDetails : List (AbstractGame a) -> List GameDetail -> List (AbstractGame a)
+mergeGameDetails games gameDetails =
+    games |> List.map (\game -> mergeGames game (getGameDetail gameDetails game.id))
+
+
+mergeGameDetailsWithModel : Model -> List GameDetail -> Model
+mergeGameDetailsWithModel model gamesDetails =
+    let
+        leagueInfo = model.leagueInfo
+
+        leagueInfo' = { leagueInfo | games = mergeGameDetails leagueInfo.games gamesDetails }
+    in
+        { model
+            | leagueInfo = leagueInfo'
+            , scrapeGamesDetailsFromHtml = Nothing
+        }
 
 
 update : Action -> Model -> ( Model, Effects Action )
@@ -238,12 +279,7 @@ update action model =
             )
 
         ScrapedGamesDetailsFromHtml gamesDetails ->
-            let
-                l = gamesDetails |> Debug.log "games details"
-            in
-                ( { model | scrapeGamesDetailsFromHtml = Nothing }
-                , Effects.none
-                )
+            ( mergeGameDetailsWithModel model gamesDetails, Effects.none )
 
         UrlHashChanged hash ->
             let
@@ -471,69 +507,3 @@ gamesTable model =
             ([ gamesHeaderRow ]
                 ++ (List.map (gamesRow model) (filteredGames))
             )
-
-
-
----------------------------------------------------------------
--- WIRING -----------------------------------------------------
----------------------------------------------------------------
-
-
-app : StartApp.App Model
-app =
-    StartApp.start
-        { init = ( initialModel, Effects.none )
-        , update = update
-        , view = view
-        , inputs =
-            [ (Signal.map (\leagueInfo -> GotFromPouchDb leagueInfo) setLeagueData)
-            , (Signal.map (\error -> ErrorGetFromCouchDb error) errorGetFromPouchDb)
-            , (Signal.map (\leagueInfo -> ScrapedLeagueHtml leagueInfo) scrapedLeagueHtml)
-            , (Signal.map (\gamesDetails -> ScrapedGamesDetailsFromHtml gamesDetails) scrapedGamesDetailsFromHtml)
-            , (Signal.map (\hash -> UrlHashChanged hash) urlHashChanged)
-            ]
-        }
-
-
-main : Signal Html
-main =
-    app.html
-
-
-
--- start app port
-
-
-port tasks : Signal (Task.Task Effects.Never ())
-port tasks =
-    app.tasks
-
-
-
--- inbound ports (functions that can be called from js)
-
-
-port errorGetFromPouchDb : Signal String
-port setLeagueData : Signal LeagueInfo
-port scrapedLeagueHtml : Signal LeagueInfo
-port scrapedGamesDetailsFromHtml : Signal GamesDetails
-port urlHashChanged : Signal String
-
-
-
--- outbound ports (functions that can be called from elm)
-
-
-port scrapeLeagueFromHtml : Signal String
-port scrapeLeagueFromHtml =
-    Signal.filterMap (\m -> m.scrapeLeagueFromHtml) "initial" app.model
-
-
-port scrapeGamesDetailsFromHtml : Signal (List String)
-port scrapeGamesDetailsFromHtml =
-    Signal.filterMap (\m -> m.scrapeGamesDetailsFromHtml) [] app.model
-
-
-port getFromCouchDb : Signal String
-port getFromCouchDb =
-    Signal.filterMap (\m -> m.getFromCouchDb) "initial" app.model

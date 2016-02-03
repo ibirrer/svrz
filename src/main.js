@@ -33,7 +33,7 @@ var storeLeagueInfo = function(leagueInfo) {
 }
 
 // start elm app
-var app = Elm.fullscreen(Elm.Razfaz,
+var app = Elm.fullscreen(Elm.Main,
         { scrapedLeagueHtml:
             { leagueId: "0"
             , games: []

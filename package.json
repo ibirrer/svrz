@@ -7,12 +7,12 @@
     "test:elm": "elm-make test/RazfazTest.elm --yes --output build/test.html",
 
     "watch:test": "watch-run -i -p 'test/*.elm,src/*.elm' 'elm-make test/RazfazTest.elm --yes --output build/test.html'",
-    "watch:elm": "watch-run -i -p 'src/*.elm' 'elm-make src/Razfaz.elm --yes --output build/razfaz.js'",
+    "watch:elm": "watch-run -i -p 'src/*.elm' 'elm-make src/Main.elm --yes --output build/razfaz.js'",
     "watch:browserify": "watchify src/main.js -o build/main.js",
     "watch:assets": "watch-run -i -p 'src/*.html,src/*.css' 'copyfiles -u 1 src/*.css src/*.html build'",
     "watch": "npm run watch:elm & npm run watch:browserify & npm run watch:assets",
 
-    "build:elm": "elm-make src/Razfaz.elm --yes --output build/razfaz.js",
+    "build:elm": "elm-make src/Main.elm --yes --output build/razfaz.js",
     "build:browserify": "browserify src/main.js --outfile build/main.js",
     "build:assets": "copyfiles -u 1 src/*.css src/*.html build",
     "build": "npm run build:elm && npm run build:browserify && npm run build:assets",

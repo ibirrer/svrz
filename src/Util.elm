@@ -1,4 +1,4 @@
-module Util (dateShortString) where
+module Util (dateShortString, zeroPad) where
 
 import Date
 import String
