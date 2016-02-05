@@ -65,3 +65,8 @@ port scrapeGamesDetailsFromHtml =
 port getFromCouchDb : Signal String
 port getFromCouchDb =
     Signal.filterMap (\m -> m.getFromCouchDb) "initial" app.model
+
+
+port upsertLeagueInfo : Signal LeagueInfo
+port upsertLeagueInfo =
+    Signal.filterMap (\m -> m.upsertLeagueInfo) initialModel.leagueInfo app.model

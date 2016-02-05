@@ -44,8 +44,7 @@
                 a. Error [ ]
                     1. Log error [ ]
                 b. Success [x]
-                    1. Merge detail data with leagueInfo [ ]
-                        1. Should make links available in games if details were not available before
+                    1. Merge detail data with leagueInfo [x]
                     2. Store data in PouchDB [ ]
                         a. Error
                             1. Log error

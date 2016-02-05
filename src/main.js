@@ -6,7 +6,7 @@ var $ = require('jquery');
 var PouchDB = require('pouchdb');
 
 
-var storeLeagueInfo = function(leagueInfo) {
+var upsertLeagueInfo = function(leagueInfo) {
     // _id needed by pouchdb
     leagueInfo._id = leagueInfo.leagueId;
     var db = new PouchDB(leagueInfo.leagueId);
@@ -15,7 +15,7 @@ var storeLeagueInfo = function(leagueInfo) {
         .then(function(doc) {
             // update
             leagueInfo._rev = doc._rev;
-            db.put(leagueInfo)
+            return db.put(leagueInfo)
                 .then(function(response) {
                     console.log("updated");
                 }).catch(function(err) {
@@ -53,6 +53,11 @@ var app = Elm.fullscreen(Elm.Main,
 window.onhashchange = function() {
     app.ports.urlHashChanged.send(location.hash);
 }
+
+
+app.ports.upsertLeagueInfo.subscribe(function(leagueInfo) {
+   upsertLeagueInfo(leagueInfo);
+});
 
 
 app.ports.scrapeLeagueFromHtml.subscribe(function(leagueHtml) {

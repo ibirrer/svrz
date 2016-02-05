@@ -74,6 +74,7 @@ type alias Model =
     , scrapeLeagueFromHtml : Maybe String
     , scrapeGamesDetailsFromHtml : Maybe (List String)
     , getFromCouchDb : Maybe String
+    , upsertLeagueInfo : Maybe LeagueInfo
     , teamId : Int
     , pageType : PageType
     }
@@ -118,6 +119,7 @@ initialModel =
     , scrapeLeagueFromHtml = Nothing
     , scrapeGamesDetailsFromHtml = Nothing
     , getFromCouchDb = Nothing
+    , upsertLeagueInfo = Nothing
     , teamId = defaultTeam
     , pageType = TeamPage
     }
@@ -144,6 +146,7 @@ type Action
     | GetFromPouchDb String
     | ScrapedGamesDetailsFromHtml (List GameDetail)
     | UrlHashChanged String
+    | UpsertedLeagueInfo
 
 
 getLeagueHtmlFromSvrz : String -> Effects Action
@@ -279,7 +282,17 @@ update action model =
             )
 
         ScrapedGamesDetailsFromHtml gamesDetails ->
-            ( mergeGameDetailsWithModel model gamesDetails, Effects.none )
+            let
+                modelWithGameDetails = mergeGameDetailsWithModel model gamesDetails
+            in
+                ( { modelWithGameDetails | upsertLeagueInfo = Just modelWithGameDetails.leagueInfo }
+                , Effects.task (Task.succeed (UpsertedLeagueInfo))
+                )
+
+        UpsertedLeagueInfo ->
+            ( { model | upsertLeagueInfo = Nothing }
+            , Effects.none
+            )
 
         UrlHashChanged hash ->
             let
@@ -316,6 +329,10 @@ update action model =
 flatMap : (a -> Maybe b) -> Maybe a -> Maybe b
 flatMap callback maybe =
     Maybe.andThen maybe callback
+
+
+
+-- matches the first integer in the given regular expression
 
 
 matchInt : String -> String -> Maybe Int
