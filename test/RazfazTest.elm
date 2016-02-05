@@ -36,6 +36,25 @@ tests =
                 (zeroPad 5)
             )
         , testMergeModel
+        , matchInt
+        ]
+
+
+matchInt =
+    suite
+        "matchInt"
+        [ test
+            "finds exact match"
+            (assertEqual
+                (Just 23)
+                (Razfaz.matchInt "games/([0-9]*)" "games/23")
+            )
+        , test
+            "return nothin if more than one match"
+            (assertEqual
+                (Nothing)
+                (Razfaz.matchInt "games/([0-9]*)/([0-9]*)" "games/33/23")
+            )
         ]
 
 

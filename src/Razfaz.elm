@@ -3,8 +3,8 @@ module Razfaz (..) where
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import List
-import String exposing (toUpper, repeat, trimRight)
+import List exposing (map)
+import String exposing (toUpper, repeat, trimRight, join)
 import Dict exposing (Dict)
 import Regex exposing (regex)
 import Signal exposing (Address)
@@ -13,6 +13,7 @@ import Http
 import Task
 import Util
 import Debug
+import Result
 
 
 -----------------------------------
@@ -130,7 +131,7 @@ initialModel =
 
 type PageType
     = TeamPage
-    | GamePage
+    | GamePage (Maybe Int)
 
 
 type Action
@@ -285,8 +286,8 @@ update action model =
                 ( teamId, pageType ) =
                     if Regex.contains (regex "^#teams/[0-9]{5}$") hash then
                         ( getTeamIdFromHash (hash), TeamPage )
-                    else if Regex.contains (regex "^#games/[0-9]{5}$") hash then
-                        ( defaultTeam, GamePage )
+                    else if Regex.contains (regex "^#games/[0-9]*$") hash then
+                        ( defaultTeam, GamePage (matchInt "^#games/([0-9]*)$" hash) )
                     else
                         ( defaultTeam, TeamPage )
 
@@ -317,27 +318,55 @@ flatMap callback maybe =
     Maybe.andThen maybe callback
 
 
+matchInt : String -> String -> Maybe Int
+matchInt regex string =
+    let
+        match = Regex.find Regex.All (Regex.regex regex) string
+    in
+        case match of
+            head :: [] ->
+                case head.submatches of
+                    head :: [] ->
+                        case head of
+                            Just s' ->
+                                String.toInt s' |> Result.toMaybe
+
+                            Nothing ->
+                                Nothing
+
+                    _ ->
+                        Nothing
+
+            _ ->
+                Nothing
+
+
 
 ---------------------------------------------------------------
 -- VIEW -------------------------------------------------------
 ---------------------------------------------------------------
 
 
-gameDetail model =
-    let
-        setResult =
-            model.leagueInfo.games
-                |> List.head
-                |> flatMap .setsResults
-    in
-        case setResult of
-            Just setResult' ->
-                (setResult'.home |> List.map toString |> String.join " ")
-                    ++ " "
-                    ++ (setResult'.away |> List.map toString |> String.join " ")
+setResultView game =
+    case game.setsResults of
+        Just result ->
+            div
+                []
+                [ p [] [ result.home |> map toString |> join " " |> text, span [] [ text (" - " ++ game.team) ] ]
+                , p [] [ result.away |> map toString |> join " " |> text, span [] [ text (" - " ++ game.opponent) ] ]
+                ]
 
-            Nothing ->
-                "n/a"
+        Nothing ->
+            p [] [ text "n/a" ]
+
+
+gymView gym =
+    case gym of
+        Just gym' ->
+            p [] [ a [ href gym'.map ] [ text gym'.name ] ]
+
+        Nothing ->
+            p [] [ text "Keine Angaben zur Turnhalle" ]
 
 
 view : Address Action -> Model -> Html
@@ -353,13 +382,30 @@ view address model =
                 , gamesTable model
                 ]
 
-        GamePage ->
-            div
-                []
-                [ pageHeader
-                , h2 [] [ text "Spiele Details" ]
-                , p [] [ text (gameDetail model) ]
-                ]
+        GamePage gameId ->
+            case gameId of
+                Just gameId' ->
+                    let
+                        game =
+                            model.leagueInfo.games
+                                |> List.filter (\g -> g.id == gameId')
+                                |> List.head
+                    in
+                        case game of
+                            Just game' ->
+                                div
+                                    []
+                                    [ pageHeader
+                                    , h2 [] [ text "Spiele Details" ]
+                                    , setResultView game'
+                                    , gymView game'.gym
+                                    ]
+
+                            Nothing ->
+                                div [] [ text "Spiel nicht gefunden" ]
+
+                Nothing ->
+                    div [] [ text "Spiel nicht gefunden" ]
 
 
 pageHeader : Html
@@ -490,20 +536,30 @@ gamesRow : Model -> Game -> Html
 gamesRow model game =
     let
         gameResultState = getGameResultState game model.teamId
+
+        opponent =
+            text
+                (if model.teamId == game.teamId then
+                    game.opponent
+                 else
+                    game.team
+                )
     in
         tr
             []
             [ td [] [ text (homeAwayShortString model game) ]
             , td [] [ text (Util.dateShortString game.datetime) ]
-            , td
-                []
-                [ text
-                    (if model.teamId == game.teamId then
-                        game.opponent
-                     else
-                        game.team
-                    )
-                ]
+            , case game.gym of
+                Just gym' ->
+                    td
+                        []
+                        [ a
+                            [ href ("#games/" ++ toString game.id) ]
+                            [ opponent ]
+                        ]
+
+                Nothing ->
+                    td [] [ opponent ]
             , td
                 [ classList
                     [ ( resultToStyle gameResultState, True )

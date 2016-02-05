@@ -4,7 +4,7 @@
     "repository": "https://github.com/ibirrer/svrz.git",
     "license": "ISC",
     "source-directories": [
-        "src"
+        ".", "../src"
     ],
     "exposed-modules": [],
     "dependencies": {
