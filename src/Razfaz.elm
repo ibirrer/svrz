@@ -269,12 +269,21 @@ update action model =
             )
 
         ScrapedLeagueHtml newLeagueInfo ->
-            ( { model
-                | leagueInfo = newLeagueInfo
-                , scrapeLeagueFromHtml = Nothing
-              }
-            , getGamesDetailsHtmlFromSvrz (newLeagueInfo.games |> List.map .id)
-            )
+            let
+                currentLeagueInfo = model.leagueInfo
+
+                updateLeagueInfo =
+                    if List.isEmpty currentLeagueInfo.games then
+                        newLeagueInfo
+                    else
+                        { currentLeagueInfo | ranking = newLeagueInfo.ranking }
+            in
+                ( { model
+                    | leagueInfo = updateLeagueInfo
+                    , scrapeLeagueFromHtml = Nothing
+                  }
+                , getGamesDetailsHtmlFromSvrz (newLeagueInfo.games |> List.map .id)
+                )
 
         GotGamesDetailsHtmlFromSvrz gamesDetailsHtml ->
             ( { model | scrapeGamesDetailsFromHtml = gamesDetailsHtml }
