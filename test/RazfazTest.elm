@@ -37,7 +37,47 @@ tests =
             )
         , testMergeModel
         , matchInt
+        , testMergeLeagueInfoGames
         ]
+
+
+testMergeLeagueInfoGames =
+    let
+        gamesWithDetails =
+            [ { id = 1
+              , setsResults = Just { home = [ 25, 25, 25 ], away = [ 10, 14, 18 ] }
+              , gym =
+                    Just
+                        { name = "Turnhalle"
+                        , map = "http://map.com?q=Turnhalle"
+                        }
+              }
+            ]
+
+        gamesWithouthDetails =
+            [ { id = 1
+              , setsResults = Nothing
+              , gym = Nothing
+              }
+            ]
+
+        expectedGames =
+            [ { id = 1
+              , setsResults = Just { home = [ 25, 25, 25 ], away = [ 10, 14, 18 ] }
+              , gym =
+                    Just
+                        { name = "Turnhalle"
+                        , map = "http://map.com?q=Turnhalle"
+                        }
+              }
+            ]
+    in
+        test
+            "merge"
+            (assertEqual
+                expectedGames
+                (Razfaz.mergeLeagueInfoGames gamesWithDetails gamesWithouthDetails)
+            )
 
 
 matchInt =

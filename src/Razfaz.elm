@@ -3,7 +3,7 @@ module Razfaz (..) where
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (..)
-import List exposing (map)
+import List exposing (map, filter)
 import String exposing (toUpper, repeat, trimRight, join)
 import Dict exposing (Dict)
 import Regex exposing (regex)
@@ -220,17 +220,38 @@ mergeGameDetails games gameDetails =
     games |> List.map (\game -> mergeGames game (getGameDetail gameDetails game.id))
 
 
-mergeGameDetailsWithModel : Model -> List GameDetail -> Model
-mergeGameDetailsWithModel model gamesDetails =
-    let
-        leagueInfo = model.leagueInfo
+mergeGameDetailsWithLeagueInfo : LeagueInfo -> List GameDetail -> LeagueInfo
+mergeGameDetailsWithLeagueInfo leagueInfo gamesDetails =
+    { leagueInfo | games = mergeGameDetails leagueInfo.games gamesDetails }
 
-        leagueInfo' = { leagueInfo | games = mergeGameDetails leagueInfo.games gamesDetails }
-    in
-        { model
-            | leagueInfo = leagueInfo'
-            , scrapeGamesDetailsFromHtml = Nothing
-        }
+
+getGame : List (AbstractGame a) -> Int -> Maybe (AbstractGame a)
+getGame games gameId =
+    games
+        |> filter (\game -> game.id == gameId)
+        |> List.head
+
+
+mergeLeagueInfoGame : Maybe (AbstractGame a) -> AbstractGame a -> AbstractGame a
+mergeLeagueInfoGame srcGame destGame =
+    case srcGame of
+        Just srcGame' ->
+            { destGame
+                | setsResults = srcGame'.setsResults
+                , gym = srcGame'.gym
+            }
+
+        Nothing ->
+            destGame
+
+
+
+-- merges games details (setsResults and gym) from `src` into `dest`
+
+
+mergeLeagueInfoGames : List (AbstractGame a) -> List (AbstractGame a) -> List (AbstractGame a)
+mergeLeagueInfoGames src dest =
+    dest |> map (\destGame -> mergeLeagueInfoGame (getGame src destGame.id) destGame)
 
 
 update : Action -> Model -> ( Model, Effects Action )
@@ -276,7 +297,10 @@ update action model =
                     if List.isEmpty currentLeagueInfo.games then
                         newLeagueInfo
                     else
-                        { currentLeagueInfo | ranking = newLeagueInfo.ranking }
+                        { currentLeagueInfo
+                            | ranking = newLeagueInfo.ranking
+                            , games = mergeLeagueInfoGames currentLeagueInfo.games newLeagueInfo.games
+                        }
             in
                 ( { model
                     | leagueInfo = updateLeagueInfo
@@ -292,9 +316,15 @@ update action model =
 
         ScrapedGamesDetailsFromHtml gamesDetails ->
             let
-                modelWithGameDetails = mergeGameDetailsWithModel model gamesDetails
+                modelWithGameDetails =
+                    { model
+                        | leagueInfo = mergeGameDetailsWithLeagueInfo model.leagueInfo gamesDetails
+                        , scrapeGamesDetailsFromHtml = Nothing
+                    }
             in
-                ( { modelWithGameDetails | upsertLeagueInfo = Just modelWithGameDetails.leagueInfo }
+                ( { modelWithGameDetails
+                    | upsertLeagueInfo = Just modelWithGameDetails.leagueInfo
+                  }
                 , Effects.task (Task.succeed (UpsertedLeagueInfo))
                 )
 

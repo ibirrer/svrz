@@ -7,16 +7,19 @@
 
 [x] focus on current team (games and ranking)
 
-[*] Game Details
+[x] Game Details
+    [x] Fetch games details and show set result and map to gym
     [ ] Fetch the game details in parallel instead of fetching them in sequence (Task.sequence)
         See open issue on elm: https://github.com/elm-lang/core/issues/223
         using Effects-Extra together with sending to mailbox might work. See https://www.reddit.com/r/elm/comments/3xtxjx/periodic_http_request_to_refresh_data/
         for an example on how to send a task to a mailbox
 
-[o] Write tests
-    [o] elm
+[x] Write tests
+    [x] elm
     [ ] http://webdriver.io/
     [ ] https://saucelabs.com/ free for open source projects
+    [ ] Try https://www.npmjs.com/package/apimocker
+        or https://www.npmjs.com/package/json-server for svrz mock
 
 [o] Also scrape and display all other leagues
     [x] Read state from url -> http://ibirrer.github.io/svrz/teams/{:teamId}
@@ -38,7 +41,7 @@
 
 [ ] Add link to google maps
 
-[o] Use PouchDB for local and remote caching of league data
+[x] Use PouchDB for local and remote caching of league data
     [x] browser db
     [ ] sync to couchdb
     [ ] Hash leagueInfo results to allow that only one user needs
@@ -68,7 +71,17 @@
     Might be an option if elm can somehow read the dom of the browser. Using ports for now.
 
 
+
+
+
 Legend
 ------
 [x] done
 [*] in progress
+[-] won't do
+
+
+Articles
+--------
+* http://alistapart.com/article/motion-with-meaning-semantic-animation-in-interface-design
+
