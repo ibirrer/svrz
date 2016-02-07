@@ -9,16 +9,16 @@
     "watch:test": "watch-run -i -p 'test/*.elm,src/*.elm' '(cd test; elm-make RazfazTest.elm --yes --output ../build/test.html)'",
     "watch:elm": "watch-run -i -p 'src/*.elm' 'elm-make src/Main.elm --yes --output build/razfaz.js'",
     "watch:browserify": "watchify src/main.js -o build/main.js",
-    "watch:assets": "watch-run -i -p 'src/*.html,src/*.css' 'copyfiles -u 1 src/*.css src/*.html build'",
+    "watch:assets": "watch-run -i -p 'src/*.html,src/*.css,src/images/*.svg' 'copyfiles -u 1 src/*.css src/*.html src/**/*.svg build'",
     "watch": "npm run watch:elm & npm run watch:browserify & npm run watch:assets",
 
     "build:elm": "elm-make src/Main.elm --yes --output build/razfaz.js",
     "build:browserify": "browserify src/main.js --outfile build/main.js",
-    "build:assets": "copyfiles -u 1 src/*.css src/*.html build",
+    "build:assets": "copyfiles -u 1 src/*.css src/*.html src/**/*.svg build",
     "build": "npm run build:elm && npm run build:browserify && npm run build:assets",
 
     "dist:uglify": "uglifyjs -c -m --output dist/razfaz.js build/razfaz.js build/main.js",
-    "dist:assets": "copyfiles -u 1 build/*.css build/*.html dist",
+    "dist:assets": "copyfiles -u 1 build/*.css build/*.html src/**/*.svg dist",
     "dist:prepare-scripts": "sed -i '/main.js/d' dist/index.html",
     "dist": "npm run clean && npm run build && npm run dist:assets && npm run dist:uglify && npm run dist:prepare-scripts",
 

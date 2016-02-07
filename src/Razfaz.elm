@@ -14,6 +14,8 @@ import Task
 import Util
 import Debug
 import Result
+import Header
+import Footer
 
 
 -----------------------------------
@@ -425,87 +427,95 @@ gymView gym =
             p [] [ text "Keine Angaben zur Turnhalle" ]
 
 
+gamePage address model gameId =
+    case gameId of
+        Just gameId' ->
+            let
+                game =
+                    model.leagueInfo.games
+                        |> List.filter (\g -> g.id == gameId')
+                        |> List.head
+            in
+                case game of
+                    Just game' ->
+                        div
+                            []
+                            [ h2 [] [ text "Spiele Details" ]
+                            , setResultView game'
+                            , gymView game'.gym
+                            ]
+
+                    Nothing ->
+                        div [] [ text "Spiel nicht gefunden" ]
+
+        Nothing ->
+            div [] [ text "Spiel nicht gefunden" ]
+
+
+teamPage address model =
+    div
+        []
+        [ div
+            [ class "section" ]
+            [ h2 [ class "section-title section-title-ranking" ] [ text "Rangliste" ]
+            , rankingTable address model
+            ]
+        , div
+            [ class "section" ]
+            [ h2 [ class "section-title section-title-games" ] [ text "Spiele" ]
+            , gamesTable model
+            ]
+        ]
+
+
 view : Address Action -> Model -> Html
 view address model =
-    case model.pageType of
-        TeamPage ->
-            div
-                []
-                [ pageHeader
-                , h2 [] [ text "Rangliste" ]
-                , rankingTable address model
-                , h2 [] [ text "Spiele" ]
-                , gamesTable model
-                ]
+    div
+        [ class "container" ]
+        [ Header.view
+        , case model.pageType of
+            TeamPage ->
+                teamPage address model
 
-        GamePage gameId ->
-            case gameId of
-                Just gameId' ->
-                    let
-                        game =
-                            model.leagueInfo.games
-                                |> List.filter (\g -> g.id == gameId')
-                                |> List.head
-                    in
-                        case game of
-                            Just game' ->
-                                div
-                                    []
-                                    [ pageHeader
-                                    , h2 [] [ text "Spiele Details" ]
-                                    , setResultView game'
-                                    , gymView game'.gym
-                                    ]
-
-                            Nothing ->
-                                div [] [ text "Spiel nicht gefunden" ]
-
-                Nothing ->
-                    div [] [ text "Spiel nicht gefunden" ]
-
-
-pageHeader : Html
-pageHeader =
-    h1 [] [ text "ZM Herren 1" ]
+            GamePage gameId ->
+                gamePage address model gameId
+        , Footer.view
+        ]
 
 
 rankingHeaderRow : Html
 rankingHeaderRow =
-    tr
-        []
-        [ th [] [ text "" ]
-        , th [] [ text "" ]
-        , th [] [ text "BQ" ]
-        , th [] [ text "S" ]
-        , th [] [ text "P" ]
+    div
+        [ class "row row-header" ]
+        [ div [ class "col col-header col-rank" ] [ text "" ]
+        , div [ class "col col-header col-team" ] [ text "" ]
+        , div [ class "col col-header col-bq" ] [ text "BQ" ]
+        , div [ class "col col-header col-games" ] [ text "S" ]
+        , div [ class "col col-header col-points" ] [ text "P" ]
         ]
 
 
 rankingRow : Address Action -> Int -> RankingEntry -> Html
 rankingRow address teamId rankingEntry =
     let
-        rankingStyle =
-            if rankingEntry.teamId == teamId then
-                [ ( "font-weight", "bold" ) ]
-            else
-                []
+        selected = rankingEntry.teamId == teamId
 
         teamUrl = "#teams/" ++ toString rankingEntry.teamId
     in
-        tr
-            [ style rankingStyle ]
-            [ td [] [ text ((toString rankingEntry.rank) ++ ".") ]
-            , td [] [ a [ href teamUrl ] [ text rankingEntry.team ] ]
-            , td [ class "number" ] [ text (toString rankingEntry.ballquotient) ]
-            , td [ class "number" ] [ text (toString rankingEntry.games) ]
-            , td [ class "number" ] [ text (toString rankingEntry.points) ]
+        a
+            [ class "row row-body", href teamUrl ]
+            [ div [ classList [ ( "col col-rank", True ), ( "col-selected", selected ) ] ] [ text ((toString rankingEntry.rank)) ]
+            , div [ classList [ ( "col col-team", True ), ( "col-selected", selected ) ] ] [ text rankingEntry.team ]
+            , div [ classList [ ( "col col-bq", True ), ( "col-selected", selected ) ] ] [ text (toString rankingEntry.ballquotient) ]
+            , div [ classList [ ( "col col-games", True ), ( "col-selected", selected ) ] ] [ text (toString rankingEntry.games) ]
+            , div [ classList [ ( "col col-points", True ), ( "col-selected", selected ) ] ] [ text (toString rankingEntry.points) ]
             ]
 
 
 rankingTable : Address Action -> Model -> Html
 rankingTable address model =
-    table
-        []
+    div
+        [ class "table table-ranking" ]
         ([ rankingHeaderRow ]
             ++ List.map (rankingRow address model.teamId) model.leagueInfo.ranking
         )
@@ -579,12 +589,12 @@ homeAwayShortString model game =
 
 gamesHeaderRow : Html
 gamesHeaderRow =
-    tr
-        []
-        [ th [] [ text "" ]
-        , th [] [ text "" ]
-        , th [ style [ ( "text-align", "left" ) ] ] [ text "Gegner" ]
-        , th [] [ text "Resultat" ]
+    div
+        [ class "row row-header" ]
+        [ div [ class "col col-homeaway col-header" ] [ text "" ]
+        , div [ class "col col-date col-header" ] [ text "" ]
+        , div [ class "col col-opponent col-header" ] [ text "Gegner" ]
+        , div [ class "col col-result col-header" ] [ text "Resultat" ]
         ]
 
 
@@ -601,27 +611,19 @@ gamesRow model game =
                     game.team
                 )
     in
-        tr
-            []
-            [ td [] [ text (homeAwayShortString model game) ]
-            , td [] [ text (Util.dateShortString game.datetime) ]
+        div
+            [ class "row row-body" ]
+            --, href ("#games/" ++ toString game.id) ]
+            [ div [ class "col col-homeaway" ] [ text (homeAwayShortString model game) ]
+            , div [ class "col col-date" ] [ text (Util.dateShortString game.datetime) ]
             , case game.gym of
                 Just gym' ->
-                    td
-                        []
-                        [ a
-                            [ href ("#games/" ++ toString game.id) ]
-                            [ opponent ]
-                        ]
+                    div [ class "col col-opponent" ] [ opponent ]
 
                 Nothing ->
-                    td [] [ opponent ]
-            , td
-                [ classList
-                    [ ( resultToStyle gameResultState, True )
-                    , ( "number", True )
-                    ]
-                ]
+                    div [ class "col col-opponent" ] [ opponent ]
+            , div
+                [ class "col col-result" ]
                 [ text (gameResultAsString gameResultState) ]
             ]
 
@@ -633,8 +635,8 @@ gamesTable model =
             model.leagueInfo.games
                 |> List.filter (\g -> g.teamId == model.teamId || g.opponentId == model.teamId)
     in
-        table
-            [ id "games" ]
+        div
+            [ class "table table-games", id "games" ]
             ([ gamesHeaderRow ]
                 ++ (List.map (gamesRow model) (filteredGames))
             )
