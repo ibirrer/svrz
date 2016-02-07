@@ -553,14 +553,14 @@ getGameResultState game teamId =
         NOT_PLAYED
 
 
-resultToStyle : GameResultState -> String
-resultToStyle gameResultState =
+getGameResultStyle : GameResultState -> String
+getGameResultStyle gameResultState =
     case gameResultState of
         WON h a ->
-            "won"
+            "col-result-won"
 
         LOST h a ->
-            "lost"
+            "col-result-lost"
 
         NOT_PLAYED ->
             ""
@@ -610,6 +610,8 @@ gamesRow model game =
                  else
                     game.team
                 )
+
+
     in
         div
             [ class "row row-body" ]
@@ -623,7 +625,7 @@ gamesRow model game =
                 Nothing ->
                     div [ class "col col-opponent" ] [ opponent ]
             , div
-                [ class "col col-result" ]
+                [ class ("col col-result " ++ getGameResultStyle gameResultState) ]
                 [ text (gameResultAsString gameResultState) ]
             ]
 
