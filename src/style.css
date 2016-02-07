@@ -134,7 +134,6 @@ a.row-body {
 }
 
 .col-selected {
-  font-weight: 400;
   background-color: #d3d0cb;
 }
 
@@ -181,7 +180,6 @@ a.row-body {
 }
 
 .col-result {
-  font-weight: 400;
   padding-right: 15px;
   width: 30px;
   text-align: right;
