@@ -598,7 +598,7 @@ gamesHeaderRow =
         ]
 
 
-gamesRow : Model -> Game -> Html
+gamesRow : Model -> Game -> List Html
 gamesRow model game =
     let
         gameResultState = getGameResultState game model.teamId
@@ -613,6 +613,7 @@ gamesRow model game =
 
 
     in
+        [
         div
             [ class "row row-body" ]
             --, href ("#games/" ++ toString game.id) ]
@@ -628,6 +629,8 @@ gamesRow model game =
                 [ class ("col col-result " ++ getGameResultStyle gameResultState) ]
                 [ text (gameResultAsString gameResultState) ]
             ]
+        -- , div [class "game-detail"] [ text "Details" ]
+        ]
 
 
 gamesTable : Model -> Html
@@ -636,9 +639,9 @@ gamesTable model =
         filteredGames =
             model.leagueInfo.games
                 |> List.filter (\g -> g.teamId == model.teamId || g.opponentId == model.teamId)
+
+        gameRows = filteredGames |> List.concatMap (gamesRow model)
     in
         div
             [ class "table table-games", id "games" ]
-            ([ gamesHeaderRow ]
-                ++ (List.map (gamesRow model) (filteredGames))
-            )
+            ([ gamesHeaderRow ] ++ gameRows)
