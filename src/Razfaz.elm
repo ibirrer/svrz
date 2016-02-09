@@ -514,11 +514,16 @@ rankingRow address teamId rankingEntry =
 
 rankingTable : Address Action -> Model -> Html
 rankingTable address model =
-    div
-        [ class "table table-ranking" ]
-        ([ rankingHeaderRow ]
-            ++ List.map (rankingRow address model.teamId) model.leagueInfo.ranking
-        )
+    if List.isEmpty model.leagueInfo.ranking then
+        div
+            [ class "loading" ]
+            [ img [ src "images/volleyball-inverted.svg" ] [], text "Daten werden geladen.." ]
+    else
+        div
+            [ class "table table-ranking" ]
+            ([ rankingHeaderRow ]
+                ++ List.map (rankingRow address model.teamId) model.leagueInfo.ranking
+            )
 
 
 type GameResultState
@@ -610,11 +615,8 @@ gamesRow model game =
                  else
                     game.team
                 )
-
-
     in
-        [
-        div
+        [ div
             [ class "row row-body" ]
             --, href ("#games/" ++ toString game.id) ]
             [ div [ class "col col-homeaway" ] [ text (homeAwayShortString model game) ]
@@ -629,7 +631,7 @@ gamesRow model game =
                 [ class ("col col-result " ++ getGameResultStyle gameResultState) ]
                 [ text (gameResultAsString gameResultState) ]
             ]
-        -- , div [class "game-detail"] [ text "Details" ]
+          -- , div [class "game-detail"] [ text "Details" ]
         ]
 
 

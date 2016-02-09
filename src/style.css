@@ -79,6 +79,27 @@ header h2 {
   background-image: url(images/volleyball-inverted.svg);
 }
 
+@keyframes loading {
+    0% {   }
+    40% { transform: rotate(0); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading {
+    opacity: 0.6;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    text-align: center;
+    color: #eee;
+}
+
+.loading > img {
+    width: 40px;
+    animation: loading 1.5s ease infinite;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
 .table {
   width: 100%;
   margin-top: -37px;
