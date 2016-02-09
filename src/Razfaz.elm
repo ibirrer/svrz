@@ -503,12 +503,12 @@ rankingRow address teamId rankingEntry =
         teamUrl = "#teams/" ++ toString rankingEntry.teamId
     in
         a
-            [ class "row row-body", href teamUrl ]
-            [ div [ classList [ ( "col col-rank", True ), ( "col-selected", selected ) ] ] [ text ((toString rankingEntry.rank)) ]
-            , div [ classList [ ( "col col-team", True ), ( "col-selected", selected ) ] ] [ text rankingEntry.team ]
-            , div [ classList [ ( "col col-bq", True ), ( "col-selected", selected ) ] ] [ text (toString rankingEntry.ballquotient) ]
-            , div [ classList [ ( "col col-games", True ), ( "col-selected", selected ) ] ] [ text (toString rankingEntry.games) ]
-            , div [ classList [ ( "col col-points", True ), ( "col-selected", selected ) ] ] [ text (toString rankingEntry.points) ]
+            [ classList [ ( "row row-body", True ), ( "row-selected", selected ) ], href teamUrl ]
+            [ div [ class "col col-rank" ] [ text ((toString rankingEntry.rank)) ]
+            , div [ class "col col-team" ] [ text rankingEntry.team ]
+            , div [ class "col col-bq" ] [ text (toString rankingEntry.ballquotient) ]
+            , div [ class "col col-games" ] [ text (toString rankingEntry.games) ]
+            , div [ class "col col-points" ] [ text (toString rankingEntry.points) ]
             ]
 
 

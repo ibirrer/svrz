@@ -138,16 +138,22 @@ a.row-body:link,
 a.row-body:active,
 a.row-body:visited,
 a.row-body:hover {
-    color: #08324b;
+    color: #333;
     text-decoration: none;
 }
 
-a.row-body:hover, a.row-body:active {
-  background-color: #d3d0cb;
+a.row-body:hover {
+  background-color: #fff;
 }
 
 a.row-body {
-  -webkit-tap-highlight-color:#d3d0cb;
+  -webkit-tap-highlight-color:#fbfbfb;
+}
+
+.row-selected, a.row-body:active {
+  background-color: #fff;
+  box-shadow: inset 0px 2px 0px #73ca00;
+  border-bottom: 1px solid #fff;
 }
 
 .col {
@@ -159,10 +165,6 @@ a.row-body {
 .col-header {
   padding-top: 7px;
   padding-bottom: 10px;
-}
-
-.col-selected {
-  background-color: #d3d0cb;
 }
 
 .col-rank {
